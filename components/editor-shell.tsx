@@ -19,7 +19,8 @@ import {
   MousePointer2,
   Hand,
   Trash2,
-  Copy
+  Copy,
+  Activity
 } from "lucide-react";
 
 import {
@@ -30,11 +31,13 @@ import {
   addTextbox,
   alignObject,
   createEditorCanvas,
+  createLogicConnector,
   duplicateSelectedObject,
   loadCanvasJson,
   removeSelectedObject,
   serializeCanvas,
-  toggleObjectLock
+  toggleObjectLock,
+  updateLogicConnectors
 } from "../lib/fabric";
 
 import { getDesignById, isUuid, updateDesignById } from "../lib/studio-client";
@@ -83,6 +86,10 @@ export default function EditorShell({ designId }: EditorShellProps) {
   const [zoom, setZoom] = useState(0.8);
   const [isPresenting, setIsPresenting] = useState(false);
   const [isSidebarOpen] = useState(true);
+  
+  // Pillar 1: Logic Engine State
+  const [isLinking, setIsLinking] = useState(false);
+  const [linkSource, setLinkSource] = useState<string | null>(null);
   
   const [pages, setPages] = useState<Array<{ id: string; json: any }>>([{ id: "page-1", json: null }]);
   const [activePageIndex, setActivePageIndex] = useState(0);
@@ -168,6 +175,24 @@ export default function EditorShell({ designId }: EditorShellProps) {
       if (evt.altKey || evt.button === 1) {
         isPanning = true;
         canvas.selection = false;
+        return;
+      }
+
+      // Pillar 1: Logic Linking
+      if (isLinking && opt.target) {
+        const targetId = (opt.target as any).id;
+        if (!targetId) return;
+
+        if (!linkSource) {
+          setLinkSource(targetId);
+          setSaveMessage("Source Protocol Selected");
+        } else if (linkSource !== targetId) {
+          createLogicConnector(canvas, linkSource, targetId);
+          setLinkSource(null);
+          setIsLinking(false);
+          setSaveMessage("Protocol Established");
+          pushToHistory();
+        }
       }
     });
 
@@ -188,7 +213,40 @@ export default function EditorShell({ designId }: EditorShellProps) {
       canvas.selection = true;
     });
 
+    // Strategic Snap-to-Grid
+    const grid = 20;
+    canvas.on('object:moving', (options) => {
+      if (!options.target) return;
+      options.target.set({
+        left: Math.round(options.target.left! / grid) * grid,
+        top: Math.round(options.target.top! / grid) * grid
+      });
+      // Pillar 1: Update Connectors
+      updateLogicConnectors(canvas);
+    });
+
+    canvas.on('object:scaling', () => {
+      updateLogicConnectors(canvas);
+    });
+
     canvas.on("object:modified", pushToHistory);
+
+    // Strategic Keyboard Shortcuts
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        removeSelectedObject(canvas);
+        pushToHistory();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        duplicateSelectedObject(canvas);
+        pushToHistory();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
 
     const resizeObserver = new ResizeObserver(() => {
        if (containerRef.current && fabricRef.current) {
@@ -204,8 +262,9 @@ export default function EditorShell({ designId }: EditorShellProps) {
       resizeObserver.disconnect();
       canvas.dispose();
       fabricRef.current = null;
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [activePageIndex]);
+  }, [activePageIndex, pushToHistory]);
 
   const saveNow = async () => {
     if (!fabricRef.current) return;
@@ -248,19 +307,22 @@ export default function EditorShell({ designId }: EditorShellProps) {
             <button onClick={() => setActiveTab("elements")} className={`sidebar-icon ${activeTab === "elements" ? "active" : ""}`}><Square size={20} /></button>
             <button onClick={() => setActiveTab("text")} className={`sidebar-icon ${activeTab === "text" ? "active" : ""}`}><Type size={20} /></button>
             <button onClick={() => setActiveTab("uploads")} className={`sidebar-icon ${activeTab === "uploads" ? "active" : ""}`}><CloudUpload size={20} /></button>
+            <button onClick={() => setActiveTab("content")} className={`sidebar-icon ${activeTab === "content" ? "active" : ""}`} title="Logic Layer"><Activity size={20} /></button>
             <button onClick={() => setActiveTab("brand")} className={`sidebar-icon ${activeTab === "brand" ? "active" : ""}`}><Settings size={20} /></button>
             <div style={{ flex: 1 }} />
-            <button className="sidebar-icon"><Layers size={20} /></button>
+            <button onClick={() => setActiveTab("layers")} className={`sidebar-icon ${activeTab === "layers" ? "active" : ""}`}><Layers size={20} /></button>
          </aside>
 
          <AnimatePresence>
             {isSidebarOpen && (
               <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 380, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="panel-container glass-panel">
-                 <SidePanelContent 
+                  <SidePanelContent 
                     activeTab={activeTab}
                     canvas={fabricRef.current}
                     workspaceId={documentState.workspaceId}
                     designId={designId}
+                    isLinking={isLinking}
+                    setIsLinking={setIsLinking}
                     onPushHistory={pushToHistory}
                     onAddRect={() => fabricRef.current && addRectangle(fabricRef.current)}
                     onAddCircle={() => fabricRef.current && addCircle(fabricRef.current)}
@@ -274,6 +336,7 @@ export default function EditorShell({ designId }: EditorShellProps) {
          </AnimatePresence>
 
          <section ref={containerRef} className="canvas-viewport">
+            <div className="canvas-grid" />
             <canvas ref={canvasElementRef} />
             <div className="floating-tools glass-panel">
                <button onClick={() => fabricRef.current?.setZoom(1)} className="sidebar-icon" title="Pointer"><MousePointer2 size={18} /></button>

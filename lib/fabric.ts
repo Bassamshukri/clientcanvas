@@ -188,8 +188,24 @@ export function createEditorCanvas(element: HTMLCanvasElement, width: number, he
   const canvas = new Canvas(element, {
     width,
     height,
-    backgroundColor: "#ffffff",
-    preserveObjectStacking: true
+    backgroundColor: "transparent",
+    preserveObjectStacking: true,
+    selectionColor: "rgba(139, 61, 255, 0.15)",
+    selectionBorderColor: "#8b3dff",
+    selectionLineWidth: 1
+  });
+
+  // Global Object Defaults for 'Strategic OS'
+  FabricObject.prototype.set({
+    transparentCorners: false,
+    cornerColor: "#ffffff",
+    cornerStrokeColor: "#8b3dff",
+    cornerSize: 8,
+    cornerStyle: "circle",
+    borderColor: "#8b3dff",
+    borderScaleFactor: 1.5,
+    borderDashArray: [4, 4],
+    padding: 8
   });
 
   return canvas;
@@ -210,7 +226,8 @@ export function addTextbox(canvas: Canvas, text?: string, type: "heading" | "sub
     fill: "#0e1217",
     fontFamily: "Inter, sans-serif",
     fontWeight: defaults[type].fontWeight,
-    lineHeight: 1.2
+    lineHeight: 1.2,
+    id: `logic-${Math.random().toString(36).substring(2, 9)}`
   });
 
   canvas.add(textbox);
@@ -226,7 +243,8 @@ export function addRectangle(canvas: Canvas) {
     height: 160,
     rx: 18,
     ry: 18,
-    fill: "#6d5efc"
+    fill: "#6d5efc",
+    id: `logic-${Math.random().toString(36).substring(2, 9)}`
   });
 
   canvas.add(rect);
@@ -239,7 +257,8 @@ export function addCircle(canvas: Canvas) {
     left: 150,
     top: 150,
     radius: 90,
-    fill: "#19c29b"
+    fill: "#19c29b",
+    id: `logic-${Math.random().toString(36).substring(2, 9)}`
   });
 
   canvas.add(circle);
@@ -286,8 +305,35 @@ export function createLogicConnector(canvas: Canvas, fromId: string, toId: strin
 
   line.anchorFromId = fromId;
   line.anchorToId = toId;
+  (line as any).isLogicConnector = true;
   
   canvas.add(line);
+  canvas.requestRenderAll();
+  return line;
+}
+
+export function updateLogicConnectors(canvas: Canvas) {
+  const objects = canvas.getObjects();
+  const connectors = objects.filter(o => (o as any).isLogicConnector) as Line[];
+  
+  connectors.forEach(line => {
+    const from = objects.find(o => o.id === line.anchorFromId);
+    const to = objects.find(o => o.id === line.anchorToId);
+    
+    if (from && to) {
+      const fromCenter = from.getCenterPoint();
+      const toCenter = to.getCenterPoint();
+      line.set({
+        x1: fromCenter.x,
+        y1: fromCenter.y,
+        x2: toCenter.x,
+        y2: toCenter.y
+      });
+      line.setCoords();
+    } else {
+      canvas.remove(line);
+    }
+  });
   canvas.requestRenderAll();
 }
 

@@ -6,7 +6,7 @@ import { LayersPanel } from "./layers-panel";
 import { BrandKit } from "./brand-kit";
 import { PRESET_TEMPLATES } from "../lib/templates-data";
 import { CodeExportPanel } from "./code-export-panel";
-import { StructuredInputPanel } from "./structured-input-panel";
+import { LogicPanel } from "./logic-panel";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Square, 
@@ -44,6 +44,8 @@ interface SidePanelContentProps {
   onPushHistory: () => void;
   onLoadTemplate: (json: any) => void;
   brandColors?: { primary: string; secondary: string; accent: string; fontFamily: string } | null;
+  isLinking: boolean;
+  setIsLinking: (linking: boolean) => void;
 }
 
 export function SidePanelContent({
@@ -58,7 +60,9 @@ export function SidePanelContent({
   onAddImageUrl,
   onPushHistory,
   onLoadTemplate,
-  brandColors
+  brandColors,
+  isLinking,
+  setIsLinking
 }: SidePanelContentProps) {
   const [assets, setAssets] = useState<any[]>([]);
   const [loadingAssets, setLoadingAssets] = useState(false);
@@ -167,17 +171,59 @@ export function SidePanelContent({
             )}
 
             {activeTab === "uploads" && (
-              <div className="stack" style={{ gap: "20px" }}>
-                <button className="btn-pro btn-primary" style={{ width: "100%" }} onClick={() => fileInputRef.current?.click()}>
-                   <CloudUpload size={18} style={{ marginRight: "10px" }} /> Upload files
-                </button>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                  {loadingAssets && <p className="muted-text">Syncing library...</p>}
-                  {assets.map((asset) => (
-                    <div key={asset.id} className="asset-item glass-card" onClick={() => onAddImageUrl(asset.file_url)}>
-                      <img src={asset.file_url} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+              <div className="stack" style={{ gap: "24px" }}>
+                <div>
+                   <div className="badge">Digital Assets</div>
+                   <h4 style={{ marginTop: "12px", fontSize: "16px", fontWeight: "700" }}>Strategic Asset Library</h4>
+                   <p className="muted-text" style={{ fontSize: "12px" }}>Managed high-fidelity assets for your professional designs.</p>
+                </div>
+
+                <div className="glass-card panelCard" style={{ padding: "20px", border: "1px dashed var(--border-active)", textAlign: "center", cursor: "pointer" }} onClick={() => fileInputRef.current?.click()}>
+                   <div style={{ background: "rgba(139, 61, 255, 0.1)", width: "40px", height: "40px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+                      <CloudUpload size={20} color="var(--primary)" />
+                   </div>
+                   <p style={{ fontWeight: "700", fontSize: "13px" }}>{uploading ? "Analyzing Protocol..." : "Upload Strategic Asset"}</p>
+                   <input 
+                      ref={fileInputRef} 
+                      type="file" 
+                      accept="image/*" 
+                      style={{ display: "none" }} 
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file && workspaceId) {
+                          setUploading(true);
+                          try {
+                            await uploadAsset(workspaceId, file);
+                            loadAssets();
+                          } finally { setUploading(false); }
+                        }
+                      }}
+                   />
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                  {loadingAssets ? (
+                    <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "20px" }}>
+                       <div className="animate-spin" style={{ width: "20px", height: "20px", border: "2px solid var(--primary)", borderTopColor: "transparent", borderRadius: "50%", margin: "0 auto" }} />
                     </div>
-                  ))}
+                  ) : assets.length === 0 ? (
+                    <p className="muted-text" style={{ gridColumn: "1 / -1", textAlign: "center", fontSize: "12px" }}>Zero assets in strategic storage.</p>
+                  ) : (
+                    assets.map((asset) => (
+                      <motion.div 
+                        key={asset.id} 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="asset-item-pro glass-card" 
+                        onClick={() => onAddImageUrl(asset.file_url)}
+                        style={{ cursor: "pointer", aspectRatio: "1/1", padding: "8px" }}
+                      >
+                        <div style={{ width: "100%", height: "100%", background: "rgba(255,255,255,0.02)", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                           <img src={asset.file_url} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
                 </div>
               </div>
             )}
@@ -199,7 +245,7 @@ export function SidePanelContent({
             {activeTab === "layers" && <LayersPanel canvas={canvas} />}
             {activeTab === "brand" && <BrandKit canvas={canvas} onPushHistory={onPushHistory} />}
             {activeTab === "export" && <CodeExportPanel canvas={canvas} />}
-            {activeTab === "content" && <StructuredInputPanel canvas={canvas} brandColors={brandColors} />}
+            {activeTab === "content" && <LogicPanel canvas={canvas} isLinking={isLinking} setIsLinking={setIsLinking} />}
           </motion.div>
         </AnimatePresence>
       </div>
