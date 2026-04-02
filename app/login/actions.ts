@@ -9,7 +9,14 @@ type LoginState = {
   message: string;
 };
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+import { headers } from "next/headers";
+
+async function getBaseUrl() {
+  const headerList = await headers();
+  const host = headerList.get("host");
+  const protocol = host?.includes("localhost") ? "http" : "https";
+  return `${protocol}://${host}`;
+}
 
 export async function signInWithOtp(
   _prevState: LoginState,
@@ -21,6 +28,7 @@ export async function signInWithOtp(
     return { ok: false, error: "Email is required.", message: "" };
   }
 
+  const APP_URL = await getBaseUrl();
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
     email,
@@ -72,6 +80,7 @@ export async function signUpWithPassword(
     return { ok: false, error: "Password must be at least 8 characters.", message: "" };
   }
 
+  const APP_URL = await getBaseUrl();
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email,
@@ -89,6 +98,7 @@ export async function signUpWithPassword(
 }
 
 export async function signInWithOAuth(provider: "google" | "github") {
+  const APP_URL = await getBaseUrl();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,

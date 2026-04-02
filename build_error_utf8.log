@@ -1,0 +1,57 @@
+﻿   Γû▓ Next.js 15.5.14
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 6.9s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/22) ...
+   Generating static pages (5/22) 
+   Generating static pages (10/22) 
+   Generating static pages (16/22) 
+ Γ£ô Generating static pages (22/22)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                       Size  First Load JS
+Γöî ╞Æ /                                          1.35 kB         107 kB
+Γö£ Γùï /_not-found                                  998 B         103 kB
+Γö£ ╞Æ /api/auth/linkedin/callback                  189 B         103 kB
+Γö£ ╞Æ /api/auth/linkedin/start                     189 B         103 kB
+Γö£ ╞Æ /api/auth/meta/callback                      189 B         103 kB
+Γö£ ╞Æ /api/auth/meta/start                         189 B         103 kB
+Γö£ ╞Æ /api/auth/session                            189 B         103 kB
+Γö£ ╞Æ /api/cron/publish-scheduled                  189 B         103 kB
+Γö£ ╞Æ /api/export-archives                         189 B         103 kB
+Γö£ ╞Æ /api/export-archives/[archiveId]             189 B         103 kB
+Γö£ ╞Æ /api/export-archives/[archiveId]/download    189 B         103 kB
+Γö£ ╞Æ /api/health                                  189 B         103 kB
+Γö£ ╞Æ /api/public/review/[token]                   189 B         103 kB
+Γö£ ╞Æ /api/public/review/[token]/comment           189 B         103 kB
+Γö£ ╞Æ /api/public/review/[token]/decision          189 B         103 kB
+Γö£ ╞Æ /api/publish/facebook                        189 B         103 kB
+Γö£ ╞Æ /api/publish/instagram                       189 B         103 kB
+Γö£ ╞Æ /api/publish/linkedin                        189 B         103 kB
+Γö£ ╞Æ /api/publish/linkedin-image                  189 B         103 kB
+Γö£ ╞Æ /api/review-links                            189 B         103 kB
+Γö£ ╞Æ /api/review-links/[reviewLinkId]             189 B         103 kB
+Γö£ ╞Æ /api/review-links/[reviewLinkId]/revoke      189 B         103 kB
+Γö£ ╞Æ /api/test/seed                               189 B         103 kB
+Γö£ ╞Æ /auth/callback                               189 B         103 kB
+Γö£ Γùï /debug-env                                   189 B         103 kB
+Γö£ ╞Æ /editor/[designId]                         3.16 kB         109 kB
+Γö£ ╞Æ /login                                     3.89 kB         106 kB
+Γö£ Γùï /preview                                    1.7 kB         104 kB
+Γö£ ╞Æ /review/[token]                            1.45 kB         104 kB
+Γöö ╞Æ /workspaces/[workspaceId]                  2.34 kB         108 kB
++ First Load JS shared by all                   102 kB
+  Γö£ chunks/1255-aadf393aa3a56bfa.js              46 kB
+  Γö£ chunks/4bd1b696-f785427dddbba9fb.js        54.2 kB
+  Γöö other shared chunks (total)                2.28 kB
+
+
+╞Æ Middleware                                   86.4 kB
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

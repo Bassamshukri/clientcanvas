@@ -20,7 +20,7 @@ export async function GET(request: Request) {
           setAll(cookiesToSet) {
             try {
               cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
+                cookieStore.set({ name, value, ...options })
               );
             } catch {
               // The `setAll` method was called from a Server Component.
@@ -34,11 +34,11 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       const isLocalEnv = process.env.NODE_ENV === "development";
-      if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`);
-      } else {
-        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}${next}`);
-      }
+      const baseUrl = isLocalEnv 
+        ? origin 
+        : (process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || origin);
+      
+      return NextResponse.redirect(`${baseUrl}${next}`);
     }
   }
 
