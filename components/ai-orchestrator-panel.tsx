@@ -39,7 +39,7 @@ export function AIOrchestratorPanel({
       const fw = STRATEGIC_FRAMEWORKS[activeFramework];
       if (fw) {
         const blocksWithIds = fw.blocks.map((b, i) => ({ ...b, id: `ai-${activeFramework}-${i}-${Date.now()}` }));
-        generateSmartLayout(canvas, blocksWithIds, brandColors);
+        generateSmartLayout(canvas, blocksWithIds, brandColors, fw);
       }
       setIsSynthesizing(false);
     }, 1500);

@@ -3,73 +3,70 @@ import { StructureBlock } from "../components/structured-input-panel";
 export interface StrategicFramework {
   name: string;
   description: string;
+  layout?: "vertical" | "swot" | "porters" | "pestel";
   blocks: Omit<StructureBlock, "id">[];
 }
 
 export const STRATEGIC_FRAMEWORKS: Record<string, StrategicFramework> = {
   swot: {
     name: "SWOT Analysis",
-    description: "Evaluates Strengths, Weaknesses, Opportunities, and Threats for a strategic case.",
+    description: "Evaluates Strengths, Weaknesses, Opportunities, and Threats in a 2x2 grid.",
+    layout: "swot",
     blocks: [
-      { type: "title", content: "Strategic SWOT Analysis" },
-      { type: "subtitle", content: "Internal Factors" },
-      { type: "bullet", content: "Strength: Proprietary logic-first engine architecture." },
-      { type: "bullet", content: "Weakness: Initial learning curve for legacy designers." },
-      { type: "subtitle", content: "External Factors" },
-      { type: "bullet", content: "Opportunity: High-stakes consulting market expansion." },
-      { type: "bullet", content: "Threat: Rapid AI integration in entry-level tools." }
+      { type: "title", content: "STRATEGIC_SWOT" },
+      { type: "subtitle", content: "STRENGTHS" }, // Quad 1
+      { type: "bullet", content: "Logic-First Architecture" },
+      { type: "subtitle", content: "WEAKNESSES" }, // Quad 2
+      { type: "bullet", content: "Legacy Learning Curve" },
+      { type: "subtitle", content: "OPPORTUNITIES" }, // Quad 3
+      { type: "bullet", content: "Consulting Market Expansion" },
+      { type: "subtitle", content: "THREATS" }, // Quad 4
+      { type: "bullet", content: "Commodity Design Tools" }
     ]
   },
   porters_five: {
     name: "Porter's Five Forces",
-    description: "Industrial analysis for competitive positioning.",
+    description: "Industrial analysis via a center-focused cross layout.",
+    layout: "porters",
     blocks: [
-      { type: "title", content: "Competitive Landscape Analysis" },
-      { type: "subtitle", content: "1. Threat of New Entrants" },
-      { type: "bullet", content: "High barriers due to technical complexity." },
-      { type: "subtitle", content: "2. Bargaining Power of Buyers" },
-      { type: "bullet", content: "Enterprise clients demand deep integration." },
-      { type: "subtitle", content: "3. Bargaining Power of Suppliers" },
-      { type: "bullet", content: "Low dependency on single tech vendors." },
-      { type: "subtitle", content: "4. Threat of Substitutes" },
-      { type: "bullet", content: "Basic tools are not logically structural." },
-      { type: "subtitle", content: "5. Rivalry among Competitors" },
-      { type: "bullet", content: "Focus on 'Logical Moat' to win market share." }
+      { type: "title", content: "PORTER'S_FIVE_PROTOCOL" },
+      { type: "subtitle", content: "RIVALRY" }, // Center
+      { type: "subtitle", content: "ENTRANTS" }, // Top
+      { type: "subtitle", content: "BUYERS" }, // Right
+      { type: "subtitle", content: "SUPPLIERS" }, // Left
+      { type: "subtitle", content: "SUBSTITUTES" } // Bottom
     ]
   },
   pestel: {
     name: "PESTEL Analysis",
-    description: "Macro-environmental surveillance protocol.",
+    description: "Macro-environmental surveillance in a 6-node segmented layout.",
+    layout: "pestel",
     blocks: [
-      { type: "title", content: "Global Market Surveillance" },
-      { type: "subtitle", content: "Political" },
-      { type: "bullet", content: "Data sovereignty and regional AI regulations." },
-      { type: "subtitle", content: "Economic" },
-      { type: "bullet", content: "Shifting enterprise budgets toward AI efficiency." },
-      { type: "subtitle", content: "Social" },
-      { type: "bullet", content: "Remote collaboration as the primary work standard." },
-      { type: "subtitle", content: "Technological" },
-      { type: "bullet", content: "Hyper-automation of design-to-code bridges." },
-      { type: "subtitle", content: "Environmental" },
-      { type: "bullet", content: "Sustainable server-less infrastructure." },
-      { type: "subtitle", content: "Legal" },
-      { type: "bullet", content: "IP rights for AI-orchestrated design assets." }
+      { type: "title", content: "PESTEL_SURVEILLANCE" },
+      { type: "subtitle", content: "POLITICAL" },
+      { type: "subtitle", content: "ECONOMIC" },
+      { type: "subtitle", content: "SOCIAL" },
+      { type: "subtitle", content: "TECHNOLOGICAL" },
+      { type: "subtitle", content: "ENVIRONMENTAL" },
+      { type: "subtitle", content: "LEGAL" }
     ]
   },
   okr: {
     name: "Objectives & Key Results (OKR)",
-    description: "Aligns organizational goals with measurable outcomes.",
+    description: "Aligns organizational goals with measurable outcomes (Vertical Feed).",
+    layout: "vertical",
     blocks: [
       { type: "title", content: "Q4 Strategic Objectives" },
       { type: "subtitle", content: "Objective: Dominate Professional Design Workflows" },
       { type: "bullet", content: "KR1: Zero manual overlap errors via Cascading Reflow." },
-      { type: "bullet", content: "KR2: 80% reduction in slide-deck formatting time." },
-      { type: "bullet", content: "KR3: Integration with 10 top-tier strategy firms." }
+      { type: "bullet", content: "KR2: 80% reduction in formatting time." },
+      { type: "bullet", content: "KR3: Integration with 10 top-tier firms." }
     ]
   },
   product_hunt: {
     name: "Product Hunt Pitch",
-    description: "A high-impact narrative for product launches.",
+    description: "A high-impact narrative for product launches (Vertical Story).",
+    layout: "vertical",
     blocks: [
       { type: "title", content: "Introducing Client Canvas 2.0" },
       { type: "subtitle", content: "The Anti-PowerPoint for Strategists" },
