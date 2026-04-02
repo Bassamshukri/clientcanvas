@@ -1,4 +1,5 @@
 import "./globals.css";
+import { CommandBar } from "../components/command-bar";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
@@ -14,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="antialiased">
+        <CommandBar />
+        {children}
+      </body>
     </html>
   );
 }

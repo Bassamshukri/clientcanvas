@@ -4,7 +4,8 @@ import Link from "next/link";
 import { AppHeader } from "./app-header";
 import { CreateWorkspaceForm } from "./create-workspace-form";
 import { motion } from "framer-motion";
-import { Layout, Plus, ArrowRight, Briefcase, Zap, Rocket } from "lucide-react";
+import { Layout, Plus, ArrowRight, Briefcase, Zap, Rocket, User, Search, Activity } from "lucide-react";
+import { ActivityFeed } from "./activity-feed";
 
 interface DashboardHomeProps {
   userEmail: string;
@@ -48,77 +49,127 @@ export function DashboardHome({ userEmail, workspaces }: DashboardHomeProps) {
           />
         </motion.div>
 
-        <motion.div 
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="cardGrid" 
-          style={{ marginTop: 40 }}
-        >
-          <motion.div variants={itemAttr} className="glass-card panelCard">
-             <CreateWorkspaceForm />
-          </motion.div>
-
-          <motion.div variants={itemAttr} className="glass-card panelCard" style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ marginBottom: "20px" }}>
-              <div className="badge">Quick Access</div>
-              <h3 style={{ marginTop: "12px", fontSize: "20px", fontWeight: "700" }}>Strategic Launch</h3>
-              <p className="muted-text">Direct shortcuts to high-fidelity design perimeters.</p>
+        <div style={{ 
+          display: "grid", 
+          gridTemplateColumns: "300px 1fr 340px", 
+          gap: "32px", 
+          marginTop: "40px",
+          alignItems: "start"
+        }}>
+          {/* Column 1: Identity & Strategy Stats */}
+          <motion.aside 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="stack" 
+            style={{ gap: "24px" }}
+          >
+            <div className="glass-card panelCard" style={{ padding: "24px" }}>
+               <div className="badge">Identity System</div>
+               <div style={{ marginTop: "20px", display: "flex", alignItems: "center", gap: "16px" }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "12px", background: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px var(--primary-glow)" }}>
+                     <User size={24} color="white" />
+                  </div>
+                  <div>
+                     <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800" }}>{userEmail.split('@')[0].toUpperCase()}</h4>
+                     <p className="muted-text" style={{ margin: 0, fontSize: "12px" }}>Strategic Lead</p>
+                  </div>
+               </div>
+               
+               <div style={{ marginTop: "24px", padding: "16px", background: "rgba(139, 61, 255, 0.05)", borderRadius: "12px", border: "1px solid var(--primary-glow)" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                     <span style={{ fontSize: "11px", fontWeight: "700", opacity: 0.6 }}>IDENTITY_SCORE</span>
+                     <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--primary)" }}>98.4%</span>
+                  </div>
+                  <div style={{ height: "4px", background: "rgba(255,255,255,0.05)", borderRadius: "2px", overflow: "hidden" }}>
+                     <div style={{ width: "98.4%", height: "100%", background: "var(--primary)" }} />
+                  </div>
+               </div>
             </div>
-            
-            <div className="stack" style={{ marginTop: "auto", gap: "12px" }}>
-              <Link className="btn-pro btn-secondary" href="/workspaces/demo-workspace" style={{ width: "100%", justifyContent: "flex-start" }}>
-                <Layout size={18} style={{ marginRight: "12px" }} /> Open Strategic Demo
-              </Link>
-              <Link className="btn-pro btn-secondary" href="/editor/demo-design" style={{ width: "100%", justifyContent: "flex-start" }}>
-                <Zap size={18} style={{ marginRight: "12px" }} /> Rapid Design Launch
-              </Link>
-              <Link className="btn-pro btn-secondary" href="#" style={{ width: "100%", justifyContent: "flex-start", opacity: 0.5 }}>
-                <Rocket size={18} style={{ marginRight: "12px" }} /> Browse Templates
-              </Link>
-            </div>
-          </motion.div>
 
-          {workspaces.length === 0 ? (
-            <motion.div variants={itemAttr} className="glass-card panelCard" style={{ gridColumn: "1 / -1", textAlign: "center", padding: "80px 40px" }}>
-              <div style={{ width: 80, height: 80, background: "rgba(139, 61, 255, 0.1)", borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", marginBottom: 24, border: "1px solid var(--primary-glow)" }}>
-                 <Briefcase size={40} color="var(--primary)" />
-              </div>
-              <h3 style={{ marginBottom: "12px", fontSize: "24px" }}>Strategic Perimeter Empty</h3>
-              <p className="muted-text" style={{ maxWidth: 460, margin: "0 auto 32px", fontSize: "16px" }}>
-                No active workspaces detected. Initialize your first innovation environment to begin.
-              </p>
-              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="btn-pro btn-primary" style={{ padding: "12px 32px" }}>
-                 <Plus size={18} style={{ marginRight: "10px" }} /> Initialize Now
-              </button>
+            <div className="glass-card panelCard" style={{ padding: "24px" }}>
+               <div className="badge">Command Protocol</div>
+               <div className="stack" style={{ gap: "12px", marginTop: "20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                     <Zap size={16} color="var(--primary)" />
+                     <span style={{ fontSize: "13px", fontWeight: "600" }}>Active Protocols: {workspaces.length * 3}</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                     <Briefcase size={16} color="var(--primary)" />
+                     <span style={{ fontSize: "13px", fontWeight: "600" }}>Fleet Capacity: 84%</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                     <Rocket size={16} color="var(--primary)" />
+                     <span style={{ fontSize: "13px", fontWeight: "600" }}>Deployments: 12</span>
+                  </div>
+               </div>
+            </div>
+          </motion.aside>
+
+          {/* Column 2: Active Fleet (Workspaces) */}
+          <div className="stack" style={{ gap: "24px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+               <h3 style={{ fontSize: "20px", fontWeight: "800", margin: 0 }}>ACTIVE_FLEET</h3>
+               <button className="btn-pro btn-primary" style={{ padding: "8px 16px" }}>
+                  <Plus size={16} style={{ marginRight: "8px" }} /> New Fleet
+               </button>
+            </div>
+
+            <motion.div 
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="stack" 
+              style={{ gap: "16px" }}
+            >
+              {workspaces.length === 0 ? (
+                <motion.div variants={itemAttr} className="glass-card panelCard" style={{ textAlign: "center", padding: "60px 20px" }}>
+                  <h3 style={{ marginBottom: "12px" }}>Strategic Perimeter Empty</h3>
+                  <CreateWorkspaceForm />
+                </motion.div>
+              ) : (
+                workspaces.map((workspace) => (
+                  <motion.section 
+                    key={workspace.id}
+                    variants={itemAttr}
+                    className="glass-card panelCard"
+                    style={{ position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "24px" }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                       <div style={{ width: 44, height: 44, borderRadius: "10px", background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Layout size={20} color="var(--primary)" />
+                       </div>
+                       <div>
+                          <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "700" }}>{workspace.name}</h3>
+                          <p className="muted-text" style={{ margin: 0, fontSize: "13px" }}>{workspace.description || "Active Fleet Perimeter"}</p>
+                       </div>
+                    </div>
+                    <Link 
+                      className="btn-pro btn-secondary" 
+                      href={`/workspaces/${workspace.id}`}
+                      style={{ padding: "10px 20px" }}
+                    >
+                      Initialize <ArrowRight size={16} style={{ marginLeft: "8px" }} />
+                    </Link>
+                  </motion.section>
+                ))
+              )}
             </motion.div>
-          ) : (
-            workspaces.map((workspace) => (
-              <motion.section 
-                key={workspace.id}
-                variants={itemAttr}
-                className="glass-card panelCard"
-                style={{ position: "relative", overflow: "hidden" }}
-              >
-                {/* Visual Accent */}
-                <div style={{ position: "absolute", top: 0, left: 0, width: "4px", height: "100%", background: "var(--primary)" }} />
-                
-                <div className="badge">Pro Workspace</div>
-                <h3 style={{ marginTop: "16px", fontSize: "22px", fontWeight: "700" }}>{workspace.name}</h3>
-                <p className="muted-text" style={{ height: "44px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", margin: "12px 0 24px" }}>
-                   {workspace.description || "Active strategic perimeter with no current mission brief."}
-                </p>
-                <Link 
-                  className="btn-pro btn-primary" 
-                  href={`/workspaces/${workspace.id}`}
-                  style={{ width: "100%" }}
-                >
-                  Enter Workspace <ArrowRight size={18} style={{ marginLeft: "10px" }} />
-                </Link>
-              </motion.section>
-            ))
-          )}
-        </motion.div>
+          </div>
+
+          {/* Column 3: Telemetry Stream */}
+          <motion.aside 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="stack" 
+            style={{ gap: "24px" }}
+          >
+             <ActivityFeed items={[
+                { id: "1", kind: "publish_job", title: "Global Protocol Sync", subtitle: "Fleet Delta initialized", createdAt: new Date().toISOString() },
+                { id: "2", kind: "design", title: "New Strategic Asset", subtitle: "High-fidelity node added", createdAt: new Date(Date.now() - 3600000).toISOString() },
+                { id: "3", kind: "review_link", title: "Stakeholder Review", subtitle: "Protocol Alpha-3 shared", createdAt: new Date(Date.now() - 7200000).toISOString() }
+             ]} />
+          </motion.aside>
+        </div>
       </main>
     </div>
   );
