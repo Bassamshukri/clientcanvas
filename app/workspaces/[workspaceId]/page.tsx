@@ -5,6 +5,8 @@ import { ExportArchiveManager } from "../../../components/export-archive-manager
 import { WorkspaceDashboard } from "../../../components/workspace-dashboard";
 import { requireUser } from "../../../lib/auth";
 import { createClient } from "../../../lib/supabase/server";
+import Link from "next/link";
+import { ChevronLeft, Layout } from "lucide-react";
 
 interface WorkspacePageProps {
   params: Promise<{
@@ -73,29 +75,29 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
     ...(designs || []).slice(0, 10).map((item) => ({
       id: `design-${item.id}`,
       kind: "design" as const,
-      title: `Design: ${item.title || item.id}`,
-      subtitle: `Status: ${item.status}`,
+      title: `Project: ${item.title || "Untitled Intelligence"}`,
+      subtitle: `Status: ${item.status.toUpperCase()}`,
       createdAt: item.created_at || item.updated_at || new Date().toISOString()
     })),
     ...(reviewLinks || []).map((item) => ({
       id: `review-${item.id}`,
       kind: "review_link" as const,
-      title: "Review link created",
-      subtitle: `Status: ${item.status}`,
+      title: "Review Protocol Initialized",
+      subtitle: `Current Status: ${item.status}`,
       createdAt: item.created_at || new Date().toISOString()
     })),
     ...(publishJobs || []).map((item) => ({
       id: `publish-${item.id}`,
       kind: "publish_job" as const,
-      title: `Publish job: ${item.channel}`,
-      subtitle: `Status: ${item.status}`,
+      title: `Deployment: ${item.channel.toUpperCase()}`,
+      subtitle: `Status Code: ${item.status}`,
       createdAt: item.created_at || new Date().toISOString()
     })),
     ...(archives || []).map((item) => ({
       id: `archive-${item.id}`,
       kind: "archive" as const,
-      title: "Archive created",
-      subtitle: `Status: ${item.status}`,
+      title: "Snapshot Synchronized",
+      subtitle: `Archive Status: ${item.status}`,
       createdAt: item.created_at || new Date().toISOString()
     }))
   ]
@@ -103,46 +105,47 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
     .slice(0, 12);
 
   return (
-    <main className="shell">
+    <main className="shell animate-reveal">
+      <div style={{ marginBottom: "20px" }}>
+        <Link 
+          href="/dashboard" 
+          className="btn-pro btn-secondary" 
+          style={{ 
+            display: "inline-flex", 
+            alignItems: "center", 
+            gap: 8, 
+            padding: "8px 16px",
+            fontSize: "12px",
+            fontWeight: "700",
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+            opacity: 0.8
+          }}
+        >
+          <ChevronLeft size={16} /> Command Center
+        </Link>
+      </div>
+
       <AppHeader
         title={workspace.name}
-        subtitle={workspace.description || "Workspace dashboard"}
+        subtitle={workspace.description || "Workspace Central Command"}
         email={user.email || ""}
       />
 
-      <div style={{ marginTop: 20 }}>
+      <div className="workspace-main-content" style={{ marginTop: 32 }}>
         <WorkspaceDashboard
           workspace={workspace}
-          designs={(designs || []) as Array<{
-            id: string;
-            title: string;
-            width: number;
-            height: number;
-            status: string;
-            updated_at?: string;
-          }>}
-          assets={(assets || []) as Array<{
-            id: string;
-            name: string;
-            type: string;
-            file_url: string;
-            created_at?: string;
-          }>}
+          designs={(designs || []) as any}
+          assets={(assets || []) as any}
         />
       </div>
 
-      <div style={{ marginTop: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginTop: "24px" }}>
         <ActivityFeed items={activityItems} />
-      </div>
-
-      <div style={{ marginTop: 20 }}>
+        
         <ExportArchiveManager
           workspaceId={workspace.id}
-          archives={(archives || []) as Array<{
-            id: string;
-            status: string;
-            created_at?: string;
-          }>}
+          archives={(archives || []) as any}
         />
       </div>
     </main>
