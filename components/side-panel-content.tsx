@@ -27,10 +27,11 @@ import {
   MessageSquare, 
   Code,
   Search,
+  Zap,
   Plus
 } from "lucide-react";
 
-type SidebarTab = "content" | "templates" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export" | "ai";
+type SidebarTab = "content" | "protocols" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export" | "ai";
 
 interface SidePanelContentProps {
   activeTab: SidebarTab;
@@ -229,16 +230,89 @@ export function SidePanelContent({
               </div>
             )}
 
-            {activeTab === "templates" && (
-              <div className="stack" style={{ gap: "16px" }}>
-                {PRESET_TEMPLATES.map((tmpl) => (
-                  <div key={tmpl.id} className="glass-card" style={{ overflow: "hidden", cursor: "pointer" }} onClick={() => onLoadTemplate(tmpl.json)}>
-                    <img src={tmpl.thumbnail} style={{ width: "100%", height: "120px", objectFit: "cover" }} />
-                    <div style={{ padding: "12px" }}>
-                       <strong>{tmpl.title}</strong>
-                    </div>
-                  </div>
-                ))}
+            {activeTab === "protocols" && (
+              <div className="stack" style={{ gap: "24px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                   <div className="badge">Protocol Library</div>
+                   <span style={{ fontSize: "10px", fontWeight: "700", opacity: 0.5 }}>UNIFIED_V0.5</span>
+                </div>
+                <div className="protocol-grid">
+                  {PRESET_TEMPLATES.map((template) => (
+                    <motion.div 
+                      key={template.id} 
+                      whileHover={{ scale: 1.02 }}
+                      className="protocol-node glass-card"
+                    >
+                      <div className="protocol-thumb-container">
+                        <img src={template.thumbnail} alt={template.title} className="protocol-thumb" />
+                        <div className="protocol-overlay">
+                           <button 
+                             onClick={() => onLoadTemplate(template.json)}
+                             className="btn-pro btn-primary"
+                             style={{ padding: "8px 16px", fontSize: "11px" }}
+                           >
+                              LAUNCH_PROTOCOL
+                           </button>
+                        </div>
+                      </div>
+                      <div style={{ padding: "12px" }}>
+                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                            <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "white" }}>{template.title.toUpperCase()}</h4>
+                            <Zap size={12} color="var(--primary)" />
+                         </div>
+                         <div style={{ fontSize: "10px", fontWeight: "700", color: "var(--primary)", opacity: 0.7 }}>
+                            {(template as any).category || "Strategic Deployment"}
+                         </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+                <style jsx>{`
+                  .protocol-grid {
+                     display: grid;
+                     grid-template-columns: 1fr;
+                     gap: 20px;
+                  }
+                  .protocol-node {
+                     background: rgba(255,255,255,0.02);
+                     border: 1px solid var(--border);
+                     border-radius: 12px;
+                     overflow: hidden;
+                     transition: 0.2s;
+                  }
+                  .protocol-node:hover {
+                     border-color: var(--primary-glow);
+                     background: rgba(255,255,255,0.04);
+                  }
+                  .protocol-thumb-container {
+                     position: relative;
+                     aspect-ratio: 16/9;
+                     overflow: hidden;
+                     border-bottom: 1px solid var(--border);
+                  }
+                  .protocol-thumb {
+                     width: 100%;
+                     height: 100%;
+                     object-fit: cover;
+                     transition: 0.5s;
+                  }
+                  .protocol-node:hover .protocol-thumb {
+                     transform: scale(1.05);
+                     filter: blur(2px) brightness(0.5);
+                  }
+                  .protocol-overlay {
+                     position: absolute;
+                     inset: 0;
+                     display: flex;
+                     align-items: center;
+                     justify-content: center;
+                     opacity: 0;
+                     transition: 0.3s;
+                  }
+                  .protocol-node:hover .protocol-overlay {
+                     opacity: 1;
+                  }
+                `}</style>
               </div>
             )}
 

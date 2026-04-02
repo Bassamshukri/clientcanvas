@@ -20,6 +20,42 @@ export const STRATEGIC_FRAMEWORKS: Record<string, StrategicFramework> = {
       { type: "bullet", content: "Threat: Rapid AI integration in entry-level tools." }
     ]
   },
+  porters_five: {
+    name: "Porter's Five Forces",
+    description: "Industrial analysis for competitive positioning.",
+    blocks: [
+      { type: "title", content: "Competitive Landscape Analysis" },
+      { type: "subtitle", content: "1. Threat of New Entrants" },
+      { type: "bullet", content: "High barriers due to technical complexity." },
+      { type: "subtitle", content: "2. Bargaining Power of Buyers" },
+      { type: "bullet", content: "Enterprise clients demand deep integration." },
+      { type: "subtitle", content: "3. Bargaining Power of Suppliers" },
+      { type: "bullet", content: "Low dependency on single tech vendors." },
+      { type: "subtitle", content: "4. Threat of Substitutes" },
+      { type: "bullet", content: "Basic tools are not logically structural." },
+      { type: "subtitle", content: "5. Rivalry among Competitors" },
+      { type: "bullet", content: "Focus on 'Logical Moat' to win market share." }
+    ]
+  },
+  pestel: {
+    name: "PESTEL Analysis",
+    description: "Macro-environmental surveillance protocol.",
+    blocks: [
+      { type: "title", content: "Global Market Surveillance" },
+      { type: "subtitle", content: "Political" },
+      { type: "bullet", content: "Data sovereignty and regional AI regulations." },
+      { type: "subtitle", content: "Economic" },
+      { type: "bullet", content: "Shifting enterprise budgets toward AI efficiency." },
+      { type: "subtitle", content: "Social" },
+      { type: "bullet", content: "Remote collaboration as the primary work standard." },
+      { type: "subtitle", content: "Technological" },
+      { type: "bullet", content: "Hyper-automation of design-to-code bridges." },
+      { type: "subtitle", content: "Environmental" },
+      { type: "bullet", content: "Sustainable server-less infrastructure." },
+      { type: "subtitle", content: "Legal" },
+      { type: "bullet", content: "IP rights for AI-orchestrated design assets." }
+    ]
+  },
   okr: {
     name: "Objectives & Key Results (OKR)",
     description: "Aligns organizational goals with measurable outcomes.",
@@ -29,17 +65,6 @@ export const STRATEGIC_FRAMEWORKS: Record<string, StrategicFramework> = {
       { type: "bullet", content: "KR1: Zero manual overlap errors via Cascading Reflow." },
       { type: "bullet", content: "KR2: 80% reduction in slide-deck formatting time." },
       { type: "bullet", content: "KR3: Integration with 10 top-tier strategy firms." }
-    ]
-  },
-  problem_solution: {
-    name: "Problem-Solution Framework",
-    description: "Identifies a core market gap and proposes a logical remedy.",
-    blocks: [
-      { type: "title", content: "Market Gap Identification" },
-      { type: "paragraph", content: "The current design market is split between 'complex' tools like Figma and 'simple' tools like Canva, leaving professionals with no 'logical' middle ground." },
-      { type: "subtitle", content: "The Solution" },
-      { type: "bullet", content: "A dynamic logic canvas that prioritizes structure over pixels." },
-      { type: "bullet", content: "Automated brand guardrails and real-time code export." }
     ]
   },
   product_hunt: {
