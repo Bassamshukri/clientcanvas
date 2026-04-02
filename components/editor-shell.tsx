@@ -20,7 +20,8 @@ import {
   Hand,
   Trash2,
   Copy,
-  Activity
+  Activity,
+  Sparkles
 } from "lucide-react";
 
 import {
@@ -61,7 +62,7 @@ interface LocalDesignRecord {
   workspaceId?: string;
 }
 
-type SidebarTab = "content" | "templates" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export";
+type SidebarTab = "content" | "templates" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export" | "ai";
 
 export default function EditorShell({ designId }: EditorShellProps) {
   const useRemote = isUuid(designId);
@@ -308,6 +309,7 @@ export default function EditorShell({ designId }: EditorShellProps) {
             <button onClick={() => setActiveTab("text")} className={`sidebar-icon ${activeTab === "text" ? "active" : ""}`}><Type size={20} /></button>
             <button onClick={() => setActiveTab("uploads")} className={`sidebar-icon ${activeTab === "uploads" ? "active" : ""}`}><CloudUpload size={20} /></button>
             <button onClick={() => setActiveTab("content")} className={`sidebar-icon ${activeTab === "content" ? "active" : ""}`} title="Logic Layer"><Activity size={20} /></button>
+            <button onClick={() => setActiveTab("ai")} className={`sidebar-icon ${activeTab === "ai" ? "active" : ""}`} title="AI Orchestrator"><Sparkles size={20} /></button>
             <button onClick={() => setActiveTab("brand")} className={`sidebar-icon ${activeTab === "brand" ? "active" : ""}`}><Settings size={20} /></button>
             <div style={{ flex: 1 }} />
             <button onClick={() => setActiveTab("layers")} className={`sidebar-icon ${activeTab === "layers" ? "active" : ""}`}><Layers size={20} /></button>

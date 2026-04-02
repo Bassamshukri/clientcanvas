@@ -7,6 +7,7 @@ import { BrandKit } from "./brand-kit";
 import { PRESET_TEMPLATES } from "../lib/templates-data";
 import { CodeExportPanel } from "./code-export-panel";
 import { LogicPanel } from "./logic-panel";
+import { AIOrchestratorPanel } from "./ai-orchestrator-panel";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Square, 
@@ -29,7 +30,7 @@ import {
   Plus
 } from "lucide-react";
 
-type SidebarTab = "content" | "templates" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export";
+type SidebarTab = "content" | "templates" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export" | "ai";
 
 interface SidePanelContentProps {
   activeTab: SidebarTab;
@@ -246,6 +247,7 @@ export function SidePanelContent({
             {activeTab === "brand" && <BrandKit canvas={canvas} onPushHistory={onPushHistory} />}
             {activeTab === "export" && <CodeExportPanel canvas={canvas} />}
             {activeTab === "content" && <LogicPanel canvas={canvas} isLinking={isLinking} setIsLinking={setIsLinking} />}
+            {activeTab === "ai" && <AIOrchestratorPanel canvas={canvas} brandColors={brandColors} />}
           </motion.div>
         </AnimatePresence>
       </div>
