@@ -1,7 +1,8 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
 type LoginState = {
   ok: boolean;
@@ -9,21 +10,18 @@ type LoginState = {
   message: string;
 };
 
-import { headers } from "next/headers";
-
 async function getBaseUrl() {
   const headerList = await headers();
   const host = headerList.get("host");
   const protocol = host?.includes("localhost") ? "http" : "https";
-  return `${protocol}://${host}`;
+  return `${protocol}://${host}`.replace(/\/$/, "");
 }
 
 export async function signInWithOtp(
   _prevState: LoginState,
   formData: FormData
 ): Promise<LoginState> {
-  const email = String(formData.get("email") || "").trim();
-
+  const email = formData.get("email") as string;
   if (!email) {
     return { ok: false, error: "Email is required.", message: "" };
   }
@@ -41,22 +39,29 @@ export async function signInWithOtp(
     return { ok: false, error: error.message, message: "" };
   }
 
-  return { ok: true, error: "", message: "✉️ Check your email for the magic link." };
+  return {
+    ok: true,
+    error: "",
+    message: "Check your email for a login link."
+  };
 }
 
 export async function signInWithPassword(
   _prevState: LoginState,
   formData: FormData
 ): Promise<LoginState> {
-  const email = String(formData.get("email") || "").trim();
-  const password = String(formData.get("password") || "");
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
   if (!email || !password) {
     return { ok: false, error: "Email and password are required.", message: "" };
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
 
   if (error) {
     return { ok: false, error: error.message, message: "" };
@@ -65,18 +70,14 @@ export async function signInWithPassword(
   redirect("/");
 }
 
-export async function signUpWithPassword(
+export async function signUp(
   _prevState: LoginState,
   formData: FormData
 ): Promise<LoginState> {
-  const email = String(formData.get("email") || "").trim();
-  const password = String(formData.get("password") || "");
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
-  if (!email || !password) {
-    return { ok: false, error: "Email and password are required.", message: "" };
-  }
-
-  if (password.length < 8) {
+  if (!email || password.length < 8) {
     return { ok: false, error: "Password must be at least 8 characters.", message: "" };
   }
 
@@ -94,7 +95,11 @@ export async function signUpWithPassword(
     return { ok: false, error: error.message, message: "" };
   }
 
-  return { ok: true, error: "", message: "🎉 Account created! Check your email to confirm." };
+  return {
+    ok: true,
+    error: "",
+    message: "Check your email to confirm your account."
+  };
 }
 
 export async function signInWithOAuth(provider: "google" | "github") {

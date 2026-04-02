@@ -1,11 +1,19 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";
+  
+  // Dynamic host detection from headers
+  const headerList = await headers();
+  const host = headerList.get("host");
+  const protocol = host?.includes("localhost") ? "http" : "https";
+  const origin = `${protocol}://${host}`;
 
   if (code) {
     const cookieStore = await cookies();
@@ -31,17 +39,17 @@ export async function GET(request: Request) {
         },
       }
     );
+
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+    
     if (!error) {
-      const isLocalEnv = process.env.NODE_ENV === "development";
-      const baseUrl = isLocalEnv 
-        ? origin 
-        : (process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || origin);
-      
-      return NextResponse.redirect(`${baseUrl}${next}`);
+      // Clean up the redirect URL to avoid double slashes
+      const baseUrl = origin.replace(/\/$/, "");
+      const targetNext = next.startsWith("/") ? next : `/${next}`;
+      return NextResponse.redirect(`${baseUrl}${targetNext}`);
     }
   }
 
-  // return the user to an error page with instructions
+  // Redirect to login with error if something went wrong
   return NextResponse.redirect(`${origin}/login?auth_error=callback_failed`);
 }

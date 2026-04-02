@@ -4,7 +4,7 @@ import { useActionState, useState, useTransition } from "react";
 import {
   signInWithOtp,
   signInWithPassword,
-  signUpWithPassword,
+  signUp,
   signInWithOAuth
 } from "../app/login/actions";
 
@@ -19,7 +19,7 @@ export function LoginForm() {
 
   const [magicState, magicAction, magicPending] = useActionState(signInWithOtp, initialState);
   const [passwordState, passwordAction, passwordPending] = useActionState(signInWithPassword, initialState);
-  const [signupState, signupAction, signupPending] = useActionState(signUpWithPassword, initialState);
+  const [signupState, signupAction, signupPending] = useActionState(signUp, initialState);
 
   const handleOAuth = (provider: "google" | "github") => {
     setOauthProvider(provider);

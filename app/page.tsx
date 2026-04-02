@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { DashboardHome } from "../components/dashboard-home";
 import { getCurrentUser } from "../lib/auth";
