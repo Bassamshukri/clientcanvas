@@ -11,8 +11,10 @@ export async function GET(request: Request) {
   
   // Dynamic host detection from headers
   const headerList = await headers();
+  // Force HTTPS in production to prevent cookie loss
   const host = headerList.get("host");
-  const protocol = host?.includes("localhost") ? "http" : "https";
+  const isLocal = host?.includes("localhost");
+  const protocol = isLocal ? "http" : "https";
   const origin = `${protocol}://${host}`;
 
   if (code) {
