@@ -7,6 +7,27 @@ import { BrandKit } from "./brand-kit";
 import { PRESET_TEMPLATES } from "../lib/templates-data";
 import { CodeExportPanel } from "./code-export-panel";
 import { StructuredInputPanel } from "./structured-input-panel";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Square, 
+  Circle, 
+  Triangle, 
+  Star, 
+  ArrowRight, 
+  Type, 
+  Heading1, 
+  Heading2, 
+  Type as BodyIcon, 
+  CloudUpload, 
+  Image as ImageIcon, 
+  PenTool, 
+  Palette, 
+  Layers, 
+  MessageSquare, 
+  Code,
+  Search,
+  Plus
+} from "lucide-react";
 
 type SidebarTab = "content" | "templates" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export";
 
@@ -44,7 +65,6 @@ export function SidePanelContent({
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Drawing state
   const [isDrawing, setIsDrawing] = useState(false);
   const [brushColor, setBrushColor] = useState("#8b3dff");
   const [brushWidth, setBrushWidth] = useState(5);
@@ -53,7 +73,6 @@ export function SidePanelContent({
     if (activeTab === "uploads" && workspaceId) {
       loadAssets();
     }
-    // Cleanup drawing mode if switching tabs
     if (activeTab !== "draw" && canvas?.isDrawingMode) {
       canvas.isDrawingMode = false;
       setIsDrawing(false);
@@ -91,232 +110,118 @@ export function SidePanelContent({
     }
   }
 
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !workspaceId) return;
-
-    try {
-      setUploading(true);
-      const newAsset = await uploadAsset(workspaceId, file);
-      setAssets((prev) => [newAsset, ...prev]);
-    } catch (err) {
-      alert("Upload failed. Make sure your Supabase Storage is configured.");
-    } finally {
-      setUploading(false);
-    }
-  }
-
   return (
-    <aside className="sidePanelContent">
-      <div style={{ padding: "20px" }}>
-        <h2 style={{ fontSize: "16px", fontWeight: "700", marginBottom: "20px", textTransform: "capitalize" }}>
-          {activeTab}
-        </h2>
+    <aside className="panel-container glass-panel">
+      <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "24px" }}>
+        <div>
+          <div className="badge">{activeTab}</div>
+          <h3 style={{ marginTop: "12px", textTransform: "capitalize" }}>{activeTab} Management</h3>
+          <p className="muted-text">Strategize and refine your design elements.</p>
+        </div>
 
-        {activeTab === "elements" && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-            <div
-              className="miniCard"
-              style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "80px" }}
-              onClick={onAddRect}
-            >
-              <div style={{ width: "30px", height: "30px", background: "var(--primary)", borderRadius: "4px" }} />
-              <span style={{ fontSize: "12px", fontWeight: "500" }}>Square</span>
-            </div>
-            <div
-              className="miniCard"
-              style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "80px" }}
-              onClick={onAddCircle}
-            >
-              <div style={{ width: "30px", height: "30px", background: "var(--primary)", borderRadius: "50%" }} />
-              <span style={{ fontSize: "12px", fontWeight: "500" }}>Circle</span>
-            </div>
-            {/* New Shapes */}
-            <div
-              className="miniCard"
-              style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "80px" }}
-              onClick={() => onAddShape("triangle")}
-            >
-              <div style={{ width: "0", height: "0", borderLeft: "15px solid transparent", borderRight: "15px solid transparent", borderBottom: "30px solid var(--primary)" }} />
-              <span style={{ fontSize: "12px", fontWeight: "500" }}>Triangle</span>
-            </div>
-            <div
-              className="miniCard"
-              style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "80px" }}
-              onClick={() => onAddShape("star")}
-            >
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="var(--primary)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <span style={{ fontSize: "12px", fontWeight: "500" }}>Star</span>
-            </div>
-            <div
-              className="miniCard"
-              style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "80px" }}
-              onClick={() => onAddShape("arrow")}
-            >
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="var(--primary)"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-              <span style={{ fontSize: "12px", fontWeight: "500" }}>Arrow</span>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "text" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <button
-              className="secondaryButton"
-              style={{ justifyContent: "flex-start", padding: "12px", height: "auto" }}
-              onClick={() => onAddText("heading")}
-            >
-              <span style={{ fontSize: "20px", fontWeight: "800" }}>Add a heading</span>
-            </button>
-            <button
-              className="secondaryButton"
-              style={{ justifyContent: "flex-start", padding: "12px", height: "auto" }}
-              onClick={() => onAddText("subheading")}
-            >
-              <span style={{ fontSize: "16px", fontWeight: "600" }}>Add a subheading</span>
-            </button>
-            <button
-              className="secondaryButton"
-              style={{ justifyContent: "flex-start", padding: "12px", height: "auto" }}
-              onClick={() => onAddText("body")}
-            >
-              <span style={{ fontSize: "14px" }}>Add a little bit of body text</span>
-            </button>
-          </div>
-        )}
-
-        {activeTab === "uploads" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleFileUpload}
-              accept="image/*"
-            />
-            <button 
-              className="primaryButton" 
-              style={{ width: "100%" }}
-              disabled={uploading}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {uploading ? "Uploading..." : "Upload files"}
-            </button>
-            
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "10px" }}>
-              {loadingAssets ? <p style={{ fontSize: "12px", color: "var(--muted)", gridColumn: "1/-1", textAlign: "center" }}>Loading library...</p> : null}
-              {assets.map((asset) => (
-                <div 
-                  key={asset.id} 
-                  className="miniCard" 
-                  style={{ padding: "0", overflow: "hidden", cursor: "pointer", aspectRatio: "1/1" }}
-                  onClick={() => onAddImageUrl(asset.file_url)}
-                >
-                  <img src={asset.file_url} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            transition={{ duration: 0.2 }}
+          >
+            {activeTab === "elements" && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div className="glass-card mini-card-pro" onClick={onAddRect}>
+                  <Square size={24} color="var(--primary)" />
+                  <span>Square</span>
                 </div>
-              ))}
-            </div>
-
-            <p style={{ fontSize: "12px", color: "var(--muted)", textAlign: "center", marginTop: "10px" }}>
-              Or paste a URL:
-            </p>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <input 
-                placeholder="https://..." 
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    onAddImageUrl((e.target as HTMLInputElement).value);
-                    (e.target as HTMLInputElement).value = "";
-                  }
-                }}
-              />
-            </div>
-          </div>
-        )}
-
-        {activeTab === "draw" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-             <button 
-               className={isDrawing ? "primaryButton" : "secondaryButton"}
-               style={{ width: "100%" }}
-               onClick={toggleDrawing}
-             >
-               {isDrawing ? "Disable Drawing" : "Enable Freehand Drawing"}
-             </button>
-             
-             {isDrawing && (
-               <>
-                 <div>
-                   <label style={{ fontSize: "12px", fontWeight: "600", marginBottom: "8px", display: "block" }}>Brush Color</label>
-                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                     {(brandColors ? [brandColors.primary, brandColors.secondary, brandColors.accent, "#000000"] : ["#0e1217", "#8b3dff", "#ff4d4d", "#00c896", "#ffb800"]).map(c => (
-                       <button
-                         key={c}
-                         onClick={() => setBrushColor(c)}
-                         style={{ width: "24px", height: "24px", background: c, border: brushColor === c ? "2px solid var(--text)" : "1px solid var(--border)", borderRadius: "50%", cursor: "pointer" }}
-                       />
-                     ))}
-                   </div>
-                 </div>
-                 
-                 <div>
-                   <label style={{ fontSize: "12px", fontWeight: "600", marginBottom: "8px", display: "block" }}>Brush Size: {brushWidth}px</label>
-                   <input 
-                     type="range" 
-                     min="1" 
-                     max="50" 
-                     value={brushWidth} 
-                     onChange={(e) => setBrushWidth(parseInt(e.target.value))}
-                     style={{ width: "100%" }}
-                   />
-                 </div>
-               </>
-             )}
-          </div>
-        )}
-
-        {activeTab === "templates" && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "16px" }}>
-            {PRESET_TEMPLATES.map((tmpl) => (
-              <div 
-                key={tmpl.id} 
-                className="miniCard" 
-                style={{ padding: "0", overflow: "hidden", position: "relative", cursor: "pointer", transition: "transform 0.2s ease" }}
-                onClick={() => onLoadTemplate(tmpl.json)}
-                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.02)"}
-                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-              >
-                 <div style={{ height: "136px", background: "#f0f2f5", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <img src={tmpl.thumbnail} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                 </div>
-                 <div style={{ padding: "12px", background: "var(--panel)" }}>
-                   <p style={{ fontSize: "13px", fontWeight: "600", margin: "0" }}>{tmpl.title}</p>
-                 </div>
+                <div className="glass-card mini-card-pro" onClick={onAddCircle}>
+                  <Circle size={24} color="var(--primary)" />
+                  <span>Circle</span>
+                </div>
+                <div className="glass-card mini-card-pro" onClick={() => onAddShape("triangle")}>
+                  <Triangle size={24} color="var(--primary)" />
+                  <span>Triangle</span>
+                </div>
+                <div className="glass-card mini-card-pro" onClick={() => onAddShape("star")}>
+                  <Star size={24} color="var(--primary)" />
+                  <span>Star</span>
+                </div>
+                <div className="glass-card mini-card-pro" onClick={() => onAddShape("arrow")}>
+                  <ArrowRight size={24} color="var(--primary)" />
+                  <span>Arrow</span>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
-        
-        {activeTab === "review" && (
-           <ReviewPanel designId={designId} />
-        )}
-        
-        {activeTab === "layers" && (
-           <LayersPanel canvas={canvas} />
-        )}
-        
-        {activeTab === "brand" && (
-           <BrandKit canvas={canvas} onPushHistory={onPushHistory} />
-        )}
-        
-        {activeTab === "export" && (
-           <CodeExportPanel canvas={canvas} />
-        )}
-        
-        {activeTab === "content" && (
-           <StructuredInputPanel canvas={canvas} brandColors={brandColors} />
-        )}
+            )}
+
+            {activeTab === "text" && (
+              <div className="stack" style={{ gap: "12px" }}>
+                <button className="btn-pro btn-secondary" style={{ width: "100%", justifyContent: "flex-start", padding: "16px" }} onClick={() => onAddText("heading")}>
+                  <Heading1 size={20} style={{ marginRight: "12px" }} /> Add a heading
+                </button>
+                <button className="btn-pro btn-secondary" style={{ width: "100%", justifyContent: "flex-start", padding: "16px" }} onClick={() => onAddText("subheading")}>
+                  <Heading2 size={18} style={{ marginRight: "12px" }} /> Add a subheading
+                </button>
+                <button className="btn-pro btn-secondary" style={{ width: "100%", justifyContent: "flex-start", padding: "16px" }} onClick={() => onAddText("body")}>
+                  <BodyIcon size={16} style={{ marginRight: "12px" }} /> Add body text
+                </button>
+              </div>
+            )}
+
+            {activeTab === "uploads" && (
+              <div className="stack" style={{ gap: "20px" }}>
+                <button className="btn-pro btn-primary" style={{ width: "100%" }} onClick={() => fileInputRef.current?.click()}>
+                   <CloudUpload size={18} style={{ marginRight: "10px" }} /> Upload files
+                </button>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  {loadingAssets && <p className="muted-text">Syncing library...</p>}
+                  {assets.map((asset) => (
+                    <div key={asset.id} className="asset-item glass-card" onClick={() => onAddImageUrl(asset.file_url)}>
+                      <img src={asset.file_url} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "templates" && (
+              <div className="stack" style={{ gap: "16px" }}>
+                {PRESET_TEMPLATES.map((tmpl) => (
+                  <div key={tmpl.id} className="glass-card" style={{ overflow: "hidden", cursor: "pointer" }} onClick={() => onLoadTemplate(tmpl.json)}>
+                    <img src={tmpl.thumbnail} style={{ width: "100%", height: "120px", objectFit: "cover" }} />
+                    <div style={{ padding: "12px" }}>
+                       <strong>{tmpl.title}</strong>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === "review" && <ReviewPanel designId={designId} />}
+            {activeTab === "layers" && <LayersPanel canvas={canvas} />}
+            {activeTab === "brand" && <BrandKit canvas={canvas} onPushHistory={onPushHistory} />}
+            {activeTab === "export" && <CodeExportPanel canvas={canvas} />}
+            {activeTab === "content" && <StructuredInputPanel canvas={canvas} brandColors={brandColors} />}
+          </motion.div>
+        </AnimatePresence>
       </div>
+      
+      <style jsx>{`
+        .mini-card-pro {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          padding: 20px;
+          cursor: pointer;
+        }
+        .mini-card-pro span {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--text-muted);
+        }
+      `}</style>
     </aside>
   );
 }
