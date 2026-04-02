@@ -13,6 +13,18 @@ export async function uploadWorkspaceAsset(params: {
   const arrayBuffer = await params.file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
+  // Check if bucket exists/is accessible - providing clear error messages for the user
+  const { data: bucketData, error: bucketError } = await supabase.storage.getBucket("workspace-assets");
+
+  if (bucketError) {
+    if (bucketError.message.includes("not found")) {
+      throw new Error(
+        "Storage bucket 'workspace-assets' not found. Please create this bucket in your Supabase Dashboard under Storage -> New Bucket (Public access recommended)."
+      );
+    }
+    throw bucketError;
+  }
+
   const { error: uploadError } = await supabase.storage
     .from("workspace-assets")
     .upload(path, buffer, {

@@ -1,0 +1,77 @@
+﻿   Γû▓ Next.js 15.5.14
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 3.5s
+   Linting and checking validity of types ...
+node.exe : Failed to 
+compile.
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (F  
+  ailed to compile.:Str   
+ ing) [], RemoteExcept    
+ion
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+
+./components/editor-shell.
+tsx:188:26
+Type error: Argument of 
+type '{ x: number; y: 
+number; }' is not 
+assignable to parameter 
+of type 'Point'.
+  Type '{ x: number; y: 
+number; }' is missing the 
+following properties from 
+type 'Point': add, 
+addEquals, scalarAdd, 
+scalarAddEquals, and 28 
+more.
+
+[0m [90m 186 |[39m     
+  [36mif[39m (zoomValue 
+[33m>[39m [35m20[39m) 
+zoomValue [33m=[39m 
+[35m20[39m[33m;[39m
+ [90m 187 |[39m       
+[36mif[39m (zoomValue 
+[33m<[39m 
+[35m0.01[39m) zoomValue 
+[33m=[39m 
+[35m0.01[39m[33m;[39m
+[31m[1m>[22m[39m[90m 
+188 |[39m       canvas[3
+3m.[39mzoomToPoint({ 
+x[33m:[39m opt[33m.[39
+me[33m.[39moffsetX[33m,
+[39m y[33m:[39m opt[33
+m.[39me[33m.[39moffsetY
+ }[33m,[39m 
+zoomValue)[33m;[39m
+ [90m     |[39m         
+                 
+[31m[1m^[22m[39m
+ [90m 189 |[39m       se
+tZoom(zoomValue)[33m;[39
+m
+ [90m 190 |[39m       op
+t[33m.[39me[33m.[39mpr
+eventDefault()[33m;[39m
+ [90m 191 |[39m       op
+t[33m.[39me[33m.[39mst
+opPropagation()[33m;[39m
+[0m
+Next.js build worker 
+exited with code: 1 and 
+signal: null
