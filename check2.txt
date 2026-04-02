@@ -1,0 +1,6 @@
+﻿.next/types/app/app/api/review-links/[reviewLinkId]/revoke/route.ts(2,24): error TS2306: File 'C:/Users/bassa/Documents/clientcanvas/app/app/api/review-links/[reviewLinkId]/revoke/route.ts' is not a module.
+.next/types/app/app/api/review-links/[reviewLinkId]/revoke/route.ts(5,29): error TS2306: File 'C:/Users/bassa/Documents/clientcanvas/app/app/api/review-links/[reviewLinkId]/revoke/route.ts' is not a module.
+.next/types/validator.ts(296,39): error TS2307: Cannot find module '../../app/app/api/review-links/[reviewLinkId]/revoke/route.js' or its corresponding type declarations.
+components/login-form.tsx(26,22): error TS2322: Type 'Promise<{ error: string; }>' is not assignable to type 'VoidOrUndefinedOnly | Promise<VoidOrUndefinedOnly>'.
+  Type 'Promise<{ error: string; }>' is not assignable to type 'Promise<VoidOrUndefinedOnly>'.
+    Type '{ error: string; }' is not assignable to type 'VoidOrUndefinedOnly'.
