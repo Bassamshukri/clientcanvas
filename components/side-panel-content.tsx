@@ -8,7 +8,8 @@ import { PRESET_TEMPLATES } from "../lib/templates-data";
 import { CodeExportPanel } from "./code-export-panel";
 import { LogicPanel } from "./logic-panel";
 import { AIOrchestratorPanel } from "./ai-orchestrator-panel";
-import { MotionStudioPanel } from "./motion-studio-panel";
+import dynamic from "next/dynamic";
+const MotionStudioPanel = dynamic(() => import("./motion-studio-panel").then(mod => mod.MotionStudioPanel), { ssr: false });
 import { useToast } from "./strategic-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { 

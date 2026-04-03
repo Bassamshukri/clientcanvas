@@ -54,7 +54,7 @@ export class App {
     requestAnimationFrame(this.loop.bind(this));
   }
 
-  updateCanvasSize() {
+  async updateCanvasSize() {
     const [w, h] = this.state.ratio.split("/").map(Number);
     const base = 1080;
     
@@ -71,26 +71,35 @@ export class App {
     this.textureCanvas = buildTextureCanvas(this.width, this.height, "grain");
     this.fx.resize(this.width, this.height);
     this.particles.resize(this.width, this.height);
-    this.regenerate();
+    await this.regenerate();
   }
 
-  regenerate() {
-    if (!STYLE_REGISTRY[this.state.style]) return;
-    const StyleClass = STYLE_REGISTRY[this.state.style].class;
-    const rng = new RNG(`${this.state.seed}-${this.state.choice}`);
-    const palette = getPalette(this.state.paletteMode, rng);
+  async regenerate() {
+    const styleEntry = STYLE_REGISTRY[this.state.style];
+    if (!styleEntry) return;
 
-    this.activeStyle = new StyleClass({
-      width: this.width,
-      height: this.height,
-      seed: this.state.seed,
-      choice: this.state.choice,
-      palette: palette,
-      detail: this.state.detail,
-      motion: this.state.motion,
-      physics: this.state.physics,
-      shadows: this.state.shadows,
-    });
+    try {
+        // Import the class dynamically
+        const { getStyleClass } = await import("../styles/index.js");
+        const StyleClass = await getStyleClass(this.state.style);
+        
+        const rng = new RNG(`${this.state.seed}-${this.state.choice}`);
+        const palette = getPalette(this.state.paletteMode, rng);
+
+        this.activeStyle = new StyleClass({
+        width: this.width,
+        height: this.height,
+        seed: this.state.seed,
+        choice: this.state.choice,
+        palette: palette,
+        detail: this.state.detail,
+        motion: this.state.motion,
+        physics: this.state.physics,
+        shadows: this.state.shadows,
+        });
+    } catch (err) {
+        console.error("Failed to load style:", err);
+    }
   }
 
   loop(now) {

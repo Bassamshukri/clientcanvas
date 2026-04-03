@@ -12,16 +12,12 @@ export function CommandBar({ canvas, brandColors }: { canvas?: any, brandColors?
   const [query, setQuery] = useState("");
   const router = useRouter();
 
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/intelligence" }),
+  const { messages, append, status } = useChat({
+    api: "/api/stratosphere",
     onFinish: ({ message }) => {
-       if (message.parts && canvas) {
-          message.parts.forEach((part: any) => {
-             if (part.type === 'tool-invocation' && part.toolInvocation.toolName === 'executeStrategicAction') {
-                const { action, data } = part.toolInvocation.args;
-                console.log(`DEPLOYING_ACTION: ${action}`, data);
-             }
-          });
+       if (message.content && canvas) {
+          // Check for tool calls or specific strategic keywords
+          console.log("STRATEGIC_AI_SIGNAL_RECEIVED:", message.content);
        }
     }
   });
@@ -64,7 +60,10 @@ export function CommandBar({ canvas, brandColors }: { canvas?: any, brandColors?
               onChange={e => setQuery(e.target.value)}
               onKeyDown={e => {
                  if (e.key === 'Enter' && query.toLowerCase().startsWith('ai')) {
-                    sendMessage({ text: query });
+                    append({
+                        role: "user",
+                        content: query
+                    });
                     setQuery("");
                  }
               }}

@@ -1,105 +1,89 @@
 /** @format */
 
-import { RibbonSplitStyle } from "./poster/ribbon-split.js";
-import { TornPaperBandStyle } from "./poster/torn-paper-band.js";
-import { SCurveSplitStyle } from "./poster/s-curve-split.js";
-import { HalftoneFieldStyle } from "./tech/halftone-field.js";
-import { BorderedMedallionStyle } from "./rug/bordered-medallion.js";
-import { SoftCloudStyle } from "./gradient/soft-cloud.js";
-import { GlassPanelsStyle } from "./blue/glass-panels.js";
-import { TribalTessellationStyle } from "./rug/tribal-tessellation.js";
-import { GradientMeshStyle } from "./gradient/gradient-mesh.js";
-import { NeonStripsStyle } from "./poster/neon-strips.js";
-import { BotanicalDriftStyle } from "./organic/botanical-drift.js";
-import { IslamicStarStyle } from "./tile/islamic-star.js";
-import { BrutalistBlockStyle } from "./poster/brutalist-block.js";
-import { TerrazzoStoneStyle } from "./organic/terrazzo-stone.js";
-import { TopographicWaveStyle } from "./organic/topographic-wave.js";
-import { StarlightGridStyle } from "./tech/starlight-grid.js";
-import { ChevronCascadeStyle } from "./poster/chevron-cascade.js";
-import { LiquidChromeStyle } from "./gradient/liquid-chrome.js";
-import { DamaskOrnamentStyle } from "./rug/damask-ornament.js";
-import { CyberGridStyle } from "./tech/cyber-grid.js";
-
 export const STYLE_REGISTRY = {
   ribbonSplit: {
     label: "Ribbon Split",
-    class: RibbonSplitStyle,
+    load: () => import("./poster/ribbon-split.js").then(m => m.RibbonSplitStyle),
   },
   tornPaper: {
     label: "Torn Paper Band",
-    class: TornPaperBandStyle,
+    load: () => import("./poster/torn-paper-band.js").then(m => m.TornPaperBandStyle),
   },
   sCurve: {
     label: "S-Curve Split",
-    class: SCurveSplitStyle,
+    load: () => import("./poster/s-curve-split.js").then(m => m.SCurveSplitStyle),
   },
   halftoneField: {
     label: "Halftone Field",
-    class: HalftoneFieldStyle,
+    load: () => import("./tech/halftone-field.js").then(m => m.HalftoneFieldStyle),
   },
   borderedMedallion: {
     label: "Bordered Medallion",
-    class: BorderedMedallionStyle,
+    load: () => import("./rug/bordered-medallion.js").then(m => m.BorderedMedallionStyle),
   },
   softCloud: {
     label: "Soft Cloud",
-    class: SoftCloudStyle,
+    load: () => import("./gradient/soft-cloud.js").then(m => m.SoftCloudStyle),
   },
   glassPanels: {
     label: "Glass Panels",
-    class: GlassPanelsStyle,
+    load: () => import("./blue/glass-panels.js").then(m => m.GlassPanelsStyle),
   },
   tribalTessellation: {
     label: "Tribal Tessellation",
-    class: TribalTessellationStyle,
+    load: () => import("./rug/tribal-tessellation.js").then(m => m.TribalTessellationStyle),
   },
   gradientMesh: {
     label: "Gradient Mesh",
-    class: GradientMeshStyle,
+    load: () => import("./gradient/gradient-mesh.js").then(m => m.GradientMeshStyle),
   },
   neonStrips: {
     label: "Neon Strips",
-    class: NeonStripsStyle,
+    load: () => import("./poster/neon-strips.js").then(m => m.NeonStripsStyle),
   },
   botanicalDrift: {
     label: "Botanical Drift",
-    class: BotanicalDriftStyle,
+    load: () => import("./organic/botanical-drift.js").then(m => m.BotanicalDriftStyle),
   },
   islamicStar: {
     label: "Islamic Star",
-    class: IslamicStarStyle,
+    load: () => import("./tile/islamic-star.js").then(m => m.IslamicStarStyle),
   },
   brutalistBlock: {
     label: "Brutalist Block",
-    class: BrutalistBlockStyle,
+    load: () => import("./poster/brutalist-block.js").then(m => m.BrutalistBlockStyle),
   },
   terrazzoStone: {
     label: "Terrazzo Stone",
-    class: TerrazzoStoneStyle,
+    load: () => import("./organic/terrazzo-stone.js").then(m => m.TerrazzoStoneStyle),
   },
   topographicWave: {
     label: "Topographic Wave",
-    class: TopographicWaveStyle,
+    load: () => import("./organic/topographic-wave.js").then(m => m.TopographicWaveStyle),
   },
   starlightGrid: {
     label: "Starlight Grid",
-    class: StarlightGridStyle,
+    load: () => import("./tech/starlight-grid.js").then(m => m.StarlightGridStyle),
   },
   chevronCascade: {
     label: "Chevron Cascade",
-    class: ChevronCascadeStyle,
+    load: () => import("./poster/chevron-cascade.js").then(m => m.ChevronCascadeStyle),
   },
   liquidChrome: {
     label: "Liquid Chrome",
-    class: LiquidChromeStyle,
+    load: () => import("./gradient/liquid-chrome.js").then(m => m.LiquidChromeStyle),
   },
   damaskOrnament: {
     label: "Damask Ornament",
-    class: DamaskOrnamentStyle,
+    load: () => import("./rug/damask-ornament.js").then(m => m.DamaskOrnamentStyle),
   },
   cyberGrid: {
     label: "Cyber Grid",
-    class: CyberGridStyle,
+    load: () => import("./tech/cyber-grid.js").then(m => m.CyberGridStyle),
   },
 };
+
+export async function getStyleClass(styleId) {
+    const styleEntry = STYLE_REGISTRY[styleId] || STYLE_REGISTRY.ribbonSplit;
+    return await styleEntry.load();
+}

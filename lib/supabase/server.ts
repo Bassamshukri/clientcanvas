@@ -9,9 +9,11 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY."
-    );
+    console.error("CRITICAL: Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY. App will run in Offline Mode.");
+    // Return a dummy client that doesn't crash but allows the UI to render an error state
+    return createServerClient<any, any, any>("https://missing.supabase.co", "missing", {
+        cookies: { getAll() { return []; }, setAll() {} }
+    });
   }
 
   return createServerClient<any, any, any>(url, key, {
