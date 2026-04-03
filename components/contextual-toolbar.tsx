@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Textbox } from "fabric";
+import { Sparkles, Brain, Wand2, MessageSquareText } from "lucide-react";
 
 interface ContextualToolbarProps {
   selectedType: string | null;
@@ -21,6 +22,8 @@ interface ContextualToolbarProps {
   isLocked?: boolean;
   onToggleLock?: (locked: boolean) => void;
   brandColors?: { primary: string; secondary: string; accent: string; fontFamily: string } | null;
+  onAISpark?: (action: "expand" | "rewrite" | "critique") => void;
+  isAISpending?: boolean;
 }
 
 export function ContextualToolbar({
@@ -40,7 +43,9 @@ export function ContextualToolbar({
   currentColor,
   isLocked,
   onToggleLock,
-  brandColors
+  brandColors,
+  onAISpark,
+  isAISpending
 }: ContextualToolbarProps) {
   if (!selectedType) return null;
 
@@ -107,7 +112,18 @@ export function ContextualToolbar({
           >
             I
           </button>
-          <div style={{ width: "1px", height: "20px", background: "var(--border)", margin: "0 4px" }} />
+           <div style={{ width: "1px", height: "20px", background: "var(--border)", margin: "0 4px" }} />
+           
+           <button
+             className={`btn-spark ${isAISpending ? 'is-loading' : ''}`}
+             onClick={() => onAISpark?.("expand")}
+             title="AI Neural Spark (Expand/Refine)"
+           >
+              <Sparkles size={14} />
+              <span>SPARK</span>
+           </button>
+
+           <div style={{ width: "1px", height: "20px", background: "var(--border)", margin: "0 8px" }} />
         </>
       )}
 
@@ -170,6 +186,28 @@ export function ContextualToolbar({
       <button onClick={onDelete} title="Delete" style={{ border: "none", background: "transparent", cursor: "pointer", padding: "4px", color: "var(--danger)" }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
       </button>
+
+      <style jsx>{`
+          .btn-spark {
+             display: flex;
+             align-items: center;
+             gap: 8px;
+             padding: 6px 12px;
+             background: var(--primary-glow);
+             border: 1px solid var(--primary);
+             border-radius: 8px;
+             color: white;
+             font-size: 10px;
+             font-weight: 800;
+             letter-spacing: 1px;
+             cursor: pointer;
+             transition: 0.3s;
+             box-shadow: 0 0 15px var(--primary-glow);
+          }
+          .btn-spark:hover { transform: translateY(-1px); border-color: white; }
+          .btn-spark.is-loading { opacity: 0.6; pointer-events: none; }
+          .btn-spark span { opacity: 0.9; }
+       `}</style>
     </div>
   );
 }

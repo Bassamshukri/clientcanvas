@@ -1,0 +1,7 @@
+requests
+edge-tts
+moviepy>=2.0.0
+python-dotenv
+imageio-ffmpeg
+google-generativeai
+openai

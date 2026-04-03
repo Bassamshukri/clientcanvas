@@ -2,13 +2,31 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Command, Zap, Layout, Settings, Rocket, X, ArrowRight } from "lucide-react";
+import { Search, Command, Zap, Layout, Settings, Rocket, X, ArrowRight, Brain, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 
-export function CommandBar() {
+export function CommandBar({ canvas, brandColors }: { canvas?: any, brandColors?: any }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const router = useRouter();
+
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/intelligence" }),
+    onFinish: ({ message }) => {
+       if (message.parts && canvas) {
+          message.parts.forEach((part: any) => {
+             if (part.type === 'tool-invocation' && part.toolInvocation.toolName === 'executeStrategicAction') {
+                const { action, data } = part.toolInvocation.args;
+                console.log(`DEPLOYING_ACTION: ${action}`, data);
+             }
+          });
+       }
+    }
+  });
+
+  const isLoading = status === 'streaming' || status === 'submitted';
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -41,39 +59,63 @@ export function CommandBar() {
             <Search size={20} className="muted-text" />
             <input 
               autoFocus
-              placeholder="Search fleets, protocols, or initialize command..."
+              placeholder="Search fleets, or AI command (e.g. 'Add a SWOT')..."
               value={query}
               onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => {
+                 if (e.key === 'Enter' && query.toLowerCase().startsWith('ai')) {
+                    sendMessage({ text: query });
+                    setQuery("");
+                 }
+              }}
               className="command-input"
             />
             <div className="command-k-badge">ESC</div>
           </div>
 
           <div className="command-results stack" style={{ gap: "4px" }}>
-             <div className="command-section">Strategic Protocols</div>
-             <button className="command-item active">
-                <Zap size={16} color="var(--primary)" />
-                <span>Initialize Global Protocol Sync</span>
-                <span className="command-shortcut">↵</span>
-             </button>
-             <button className="command-item">
-                <Layout size={16} />
-                <span>Browse Fleet Templates</span>
-             </button>
-             <button className="command-item">
-                <Rocket size={16} />
-                <span>Deploy to Staging Intelligence</span>
-             </button>
+              <div className="command-section" style={{ marginTop: "12px" }}>Neural Command (AI)</div>
+              {isLoading && (
+                 <div className="command-item active animate-pulse">
+                    <Sparkles size={16} color="var(--primary)" />
+                    <span>SYNTHESIZING_COMMAND_DNA...</span>
+                 </div>
+              )}
+              {messages.filter(m => m.role === 'assistant').map((m, i) => {
+                 const text = m.parts?.filter(p => p.type === 'text').map((p: any) => p.text).join(' ');
+                 if (!text) return null;
+                 return (
+                    <div key={i} className="command-item active">
+                       <Brain size={16} color="var(--primary)" />
+                       <span>{text}</span>
+                    </div>
+                 );
+              })}
 
-             <div className="command-section" style={{ marginTop: "12px" }}>Navigation</div>
-             <button className="command-item" onClick={() => { router.push("/"); setIsOpen(false); }}>
-                <Command size={16} />
-                <span>Go to Command Center</span>
-             </button>
-             <button className="command-item" onClick={() => { router.push("/workspaces"); setIsOpen(false); }}>
-                <Settings size={16} />
-                <span>Configure Identity DNA</span>
-             </button>
+              <div className="command-section" style={{ marginTop: "12px" }}>Strategic Protocols</div>
+              <button className="command-item active">
+                 <Zap size={16} color="var(--primary)" />
+                 <span>Initialize Global Protocol Sync</span>
+                 <span className="command-shortcut">↵</span>
+              </button>
+              <button className="command-item">
+                 <Layout size={16} />
+                 <span>Browse Fleet Templates</span>
+              </button>
+              <button className="command-item">
+                 <Rocket size={16} />
+                 <span>Deploy to Staging Intelligence</span>
+              </button>
+
+              <div className="command-section" style={{ marginTop: "12px" }}>Navigation</div>
+              <button className="command-item" onClick={() => { router.push("/"); setIsOpen(false); }}>
+                 <Command size={16} />
+                 <span>Go to Command Center</span>
+              </button>
+              <button className="command-item" onClick={() => { router.push("/workspaces"); setIsOpen(false); }}>
+                 <Settings size={16} />
+                 <span>Configure Identity DNA</span>
+              </button>
           </div>
 
           <div className="command-footer">
@@ -81,7 +123,7 @@ export function CommandBar() {
                 <span><kbd>↑↓</kbd> Navigate</span>
                 <span><kbd>↵</kbd> Initialize</span>
              </div>
-             <span>PROTOCOL_V0.4_ACTIVE</span>
+             <span>PROTOCOL_V3.1_ACTIVE</span>
           </div>
         </motion.div>
       </div>

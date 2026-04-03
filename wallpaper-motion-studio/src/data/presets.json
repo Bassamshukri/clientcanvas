@@ -1,0 +1,87 @@
+[
+  {
+    "name": "Midnight Tech",
+    "state": {
+      "choice": 42,
+      "seed": "Centurion",
+      "style": "halftoneField",
+      "paletteMode": "solar",
+      "ratio": "9/16",
+      "motion": 0.2,
+      "physics": 0.8,
+      "detail": 0.3,
+      "bloom": 0.4,
+      "vignette": 0.6,
+      "aberration": 0.2,
+      "particles": 0.4
+    }
+  },
+  {
+    "name": "Dreamy Clouds",
+    "state": {
+      "choice": 112,
+      "seed": "Creative",
+      "style": "softCloud",
+      "paletteMode": "sky",
+      "ratio": "9/16",
+      "motion": 0.1,
+      "physics": 0.2,
+      "detail": 0.7,
+      "bloom": 0.8,
+      "vignette": 0.2,
+      "aberration": 0.0,
+      "particles": 0.2
+    }
+  },
+  {
+    "name": "Geometric Gold",
+    "state": {
+      "choice": 7,
+      "seed": "Luxury",
+      "style": "ribbonSplit",
+      "paletteMode": "sunset",
+      "ratio": "9/16",
+      "motion": 0.4,
+      "physics": 0.6,
+      "detail": 0.5,
+      "bloom": 0.2,
+      "vignette": 0.4,
+      "aberration": 0.1,
+      "particles": 0.1
+    }
+  },
+  {
+    "name": "Icy Glass",
+    "state": {
+      "choice": 256,
+      "seed": "Glass",
+      "style": "glassPanels",
+      "paletteMode": "sky",
+      "ratio": "9/16",
+      "motion": 0.15,
+      "physics": 0.9,
+      "detail": 0.4,
+      "bloom": 0.6,
+      "vignette": 0.5,
+      "aberration": 0.1,
+      "particles": 0.6
+    }
+  },
+  {
+    "name": "Organic Grit",
+    "state": {
+      "choice": 99,
+      "seed": "Rust",
+      "style": "tornPaperBand",
+      "paletteMode": "mono",
+      "ratio": "9/16",
+      "motion": 0.3,
+      "physics": 0.5,
+      "detail": 0.8,
+      "bloom": 0.1,
+      "vignette": 0.8,
+      "aberration": 0.3,
+      "particles": 0.8
+    }
+  }
+]

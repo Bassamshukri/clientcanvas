@@ -13,8 +13,11 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.56",
+    "@ai-sdk/react": "^3.0.146",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.8",
+    "ai": "^6.0.144",
     "clsx": "^2.1.1",
     "fabric": "^6.6.1",
     "framer-motion": "^12.38.0",
@@ -23,7 +26,8 @@
     "next": "^15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^3.5.0"
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",

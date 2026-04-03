@@ -8,6 +8,8 @@ import { PRESET_TEMPLATES } from "../lib/templates-data";
 import { CodeExportPanel } from "./code-export-panel";
 import { LogicPanel } from "./logic-panel";
 import { AIOrchestratorPanel } from "./ai-orchestrator-panel";
+import { MotionStudioPanel } from "./motion-studio-panel";
+import { useToast } from "./strategic-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Square, 
@@ -28,10 +30,11 @@ import {
   Code,
   Search,
   Zap,
-  Plus
+  Plus,
+  NotebookPen
 } from "lucide-react";
 
-type SidebarTab = "content" | "protocols" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export" | "ai";
+type SidebarTab = "content" | "protocols" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export" | "ai" | "scratchpad" | "motion";
 
 interface SidePanelContentProps {
   activeTab: SidebarTab;
@@ -70,6 +73,7 @@ export function SidePanelContent({
   const [loadingAssets, setLoadingAssets] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { showToast } = useToast();
   
   const [isDrawing, setIsDrawing] = useState(false);
   const [brushColor, setBrushColor] = useState("#8b3dff");
@@ -180,11 +184,17 @@ export function SidePanelContent({
                    <p className="muted-text" style={{ fontSize: "12px" }}>Managed high-fidelity assets for your professional designs.</p>
                 </div>
 
-                <div className="glass-card panelCard" style={{ padding: "20px", border: "1px dashed var(--border-active)", textAlign: "center", cursor: "pointer" }} onClick={() => fileInputRef.current?.click()}>
+                <div className={`glass-card panelCard upload-area ${uploading ? 'scanning' : ''}`} onClick={() => !uploading && fileInputRef.current?.click()}>
+                   {uploading && <div className="holographic-line" />}
                    <div style={{ background: "rgba(139, 61, 255, 0.1)", width: "40px", height: "40px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
                       <CloudUpload size={20} color="var(--primary)" />
                    </div>
-                   <p style={{ fontWeight: "700", fontSize: "13px" }}>{uploading ? "Analyzing Protocol..." : "Upload Strategic Asset"}</p>
+                   <p style={{ fontWeight: "800", fontSize: "11px", letterSpacing: "1px" }}>
+                      {uploading ? "HOLOGRAPHIC_SCAN_IN_PROGRESS..." : "DISPATCH_STRATEGIC_ASSET"}
+                   </p>
+                   <p className="muted-text" style={{ fontSize: "10px", marginTop: "4px" }}>
+                      {uploading ? "ANALYZING_NODE_DNA..." : "PNG, JPG, SVG PREFERRED"}
+                   </p>
                    <input 
                       ref={fileInputRef} 
                       type="file" 
@@ -196,7 +206,11 @@ export function SidePanelContent({
                           setUploading(true);
                           try {
                             await uploadAsset(workspaceId, file);
+                            showToast("Asset successfully integrated into strategic storage.", "success");
                             loadAssets();
+                          } catch (err: any) {
+                             showToast(err.message || "Failed to dispatch asset.", "error");
+                             console.error("Upload failure", err);
                           } finally { setUploading(false); }
                         }
                       }}
@@ -267,52 +281,6 @@ export function SidePanelContent({
                     </motion.div>
                   ))}
                 </div>
-                <style jsx>{`
-                  .protocol-grid {
-                     display: grid;
-                     grid-template-columns: 1fr;
-                     gap: 20px;
-                  }
-                  .protocol-node {
-                     background: rgba(255,255,255,0.02);
-                     border: 1px solid var(--border);
-                     border-radius: 12px;
-                     overflow: hidden;
-                     transition: 0.2s;
-                  }
-                  .protocol-node:hover {
-                     border-color: var(--primary-glow);
-                     background: rgba(255,255,255,0.04);
-                  }
-                  .protocol-thumb-container {
-                     position: relative;
-                     aspect-ratio: 16/9;
-                     overflow: hidden;
-                     border-bottom: 1px solid var(--border);
-                  }
-                  .protocol-thumb {
-                     width: 100%;
-                     height: 100%;
-                     object-fit: cover;
-                     transition: 0.5s;
-                  }
-                  .protocol-node:hover .protocol-thumb {
-                     transform: scale(1.05);
-                     filter: blur(2px) brightness(0.5);
-                  }
-                  .protocol-overlay {
-                     position: absolute;
-                     inset: 0;
-                     display: flex;
-                     align-items: center;
-                     justify-content: center;
-                     opacity: 0;
-                     transition: 0.3s;
-                  }
-                  .protocol-node:hover .protocol-overlay {
-                     opacity: 1;
-                  }
-                `}</style>
               </div>
             )}
 
@@ -321,7 +289,39 @@ export function SidePanelContent({
             {activeTab === "brand" && <BrandKit canvas={canvas} onPushHistory={onPushHistory} />}
             {activeTab === "export" && <CodeExportPanel canvas={canvas} />}
             {activeTab === "content" && <LogicPanel canvas={canvas} isLinking={isLinking} setIsLinking={setIsLinking} />}
-            {activeTab === "ai" && <AIOrchestratorPanel canvas={canvas} brandColors={brandColors} />}
+            {activeTab === "ai" && <AIOrchestratorPanel canvas={canvas} brandColors={brandColors} onPushHistory={onPushHistory} />}
+            {activeTab === "motion" && <MotionStudioPanel workspaceId={workspaceId} />}
+            
+            {activeTab === "scratchpad" && (
+              <div className="stack" style={{ gap: "24px" }}>
+                 <div>
+                    <div className="badge">Drafting Protocol</div>
+                    <h4 style={{ marginTop: "12px", fontSize: "16px", fontWeight: "700" }}>Architect's Scratchpad</h4>
+                    <p className="muted-text" style={{ fontSize: "12px" }}>Raw strategic thoughts. Bridge the gap to structured synthesis.</p>
+                 </div>
+                 
+                 <div className="glass-panel" style={{ padding: "0", background: "rgba(0,0,0,0.2) !important", border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden" }}>
+                    <textarea 
+                       className="scratchpad-area"
+                       placeholder="Enter raw strategic insights here (e.g. Targeting high-net-worth individuals in APAC with a focus on sustainable luxury)..."
+                    />
+                    <div style={{ padding: "12px", borderTop: "1px solid var(--border)", background: "rgba(139, 61, 255, 0.03)" }}>
+                       <button 
+                         className="btn-pro btn-primary" 
+                         style={{ width: "100%", height: "40px", fontSize: "11px", letterSpacing: "1px", fontWeight: "800" }}
+                         onClick={() => showToast("Draft dispatched to AI_CORE for synthesis.", "success")}
+                       >
+                          DISPATCH_DRAFT_TO_AI_CORE
+                       </button>
+                    </div>
+                 </div>
+
+                 <div className="stack" style={{ gap: "10px" }}>
+                    <div className="badge-mini">DRAFT_STATUS: RAW</div>
+                    <p className="muted-text" style={{ fontSize: "10px" }}>Neural layers are sensitized to your drafting inputs. Protocol ready.</p>
+                 </div>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -342,6 +342,99 @@ export function SidePanelContent({
           text-transform: uppercase;
           letter-spacing: 0.05em;
           color: var(--text-muted);
+        }
+        .upload-area {
+           padding: 32px 20px;
+           border: 1px dashed var(--border);
+           text-align: center;
+           cursor: pointer;
+           position: relative;
+           overflow: hidden;
+           transition: 0.3s;
+        }
+        .upload-area:hover { border-color: var(--primary); background: rgba(139, 61, 255, 0.03); }
+        .upload-area.scanning { border-style: solid; border-color: var(--primary); }
+        
+        .holographic-line {
+           position: absolute;
+           top: 0;
+           left: 0;
+           width: 100%;
+           height: 2px;
+           background: var(--primary);
+           box-shadow: 0 0 15px var(--primary-glow);
+           animation: h-scan 2s infinite ease-in-out;
+           z-index: 10;
+        }
+        @keyframes h-scan {
+           0% { top: 0%; opacity: 0; }
+           50% { opacity: 1; }
+           100% { top: 100%; opacity: 0; }
+        }
+        .scratchpad-area {
+           width: 100%;
+           height: 300px;
+           background: transparent;
+           border: none;
+           padding: 24px;
+           color: white;
+           font-size: 14px;
+           font-family: inherit;
+           line-height: 1.6;
+           resize: none;
+           outline: none;
+        }
+        .badge-mini {
+           font-size: 8px;
+           font-weight: 900;
+           padding: 4px 10px;
+           background: rgba(255,255,255,0.05);
+           border-radius: 4px;
+           width: fit-content;
+        }
+        .protocol-grid {
+           display: grid;
+           grid-template-columns: 1fr;
+           gap: 20px;
+        }
+        .protocol-node {
+           background: rgba(255,255,255,0.02);
+           border: 1px solid var(--border);
+           border-radius: 12px;
+           overflow: hidden;
+           transition: 0.2s;
+        }
+        .protocol-node:hover {
+           border-color: var(--primary-glow);
+           background: rgba(255,255,255,0.04);
+        }
+        .protocol-thumb-container {
+           position: relative;
+           aspect-ratio: 16/9;
+           overflow: hidden;
+           border-bottom: 1px solid var(--border);
+        }
+        .protocol-thumb {
+           width: 100%;
+           height: 100%;
+           object-fit: cover;
+           transition: 0.5s;
+        }
+        .protocol-node:hover .protocol-thumb {
+           transform: scale(1.05);
+           filter: blur(2px) brightness(0.5);
+        }
+        .protocol-overlay {
+           position: absolute;
+           inset: 0;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           opacity: 0;
+           transition: 0.3s;
+        }
+        .protocol-node:hover .protocol-overlay {
+           opacity: 1;
         }
       `}</style>
     </aside>

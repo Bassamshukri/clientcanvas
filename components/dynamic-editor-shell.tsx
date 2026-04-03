@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 
 export const DynamicEditorShell = dynamic(
-  () => import("./editor-shell").then((mod) => mod.default),
+  () => import("./EditorShell").then((mod) => mod.default),
   {
     ssr: false,
     loading: () => (

@@ -1,0 +1,205 @@
+﻿   Γû▓ Next.js 15.5.14
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+node.exe : Failed to 
+compile.
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (F  
+  ailed to compile.:Str   
+ ing) [], RemoteExcept    
+ion
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+
+./components/side-panel-co
+ntent.tsx
+Error:   [31mx[0m 
+Detected nested 
+styled-jsx tag.
+  [31m|[0m Read more: ht
+tps://nextjs.org/docs/mess
+ages/nested-styled-jsx-tag
+s
+     ,-[[36;1;4mC:\Users\
+bassa\Documents\clientcanv
+as\components\side-panel-c
+ontent.tsx[0m:341:1]
+ [2m338[0m |            
+ </AnimatePresence>
+ [2m339[0m |           
+</div>
+ [2m340[0m |           
+ [2m341[0m | [35;1m,[0
+m[35;1m-[0m[35;1m>[0m 
+      <style jsx>{`
+ [2m342[0m | 
+[35;1m|[0m           
+.mini-card-pro {
+ [2m343[0m | 
+[35;1m|[0m             
+display: flex;
+ [2m344[0m | 
+[35;1m|[0m             
+flex-direction: column;
+ [2m345[0m | 
+[35;1m|[0m             
+align-items: center;
+ [2m346[0m | 
+[35;1m|[0m             
+justify-content: center;
+ [2m347[0m | 
+[35;1m|[0m             
+gap: 12px;
+ [2m348[0m | 
+[35;1m|[0m             
+padding: 20px;
+ [2m349[0m | 
+[35;1m|[0m             
+cursor: pointer;
+ [2m350[0m | 
+[35;1m|[0m           }
+ [2m351[0m | 
+[35;1m|[0m           
+.mini-card-pro span {
+ [2m352[0m | 
+[35;1m|[0m             
+font-size: 11px;
+ [2m353[0m | 
+[35;1m|[0m             
+font-weight: 700;
+ [2m354[0m | 
+[35;1m|[0m             
+text-transform: uppercase;
+ [2m355[0m | 
+[35;1m|[0m             
+letter-spacing: 0.05em;
+ [2m356[0m | 
+[35;1m|[0m             
+color: var(--text-muted);
+ [2m357[0m | 
+[35;1m|[0m           }
+ [2m358[0m | 
+[35;1m|[0m           
+.upload-area {
+ [2m359[0m | 
+[35;1m|[0m              
+padding: 32px 20px;
+ [2m360[0m | 
+[35;1m|[0m              
+border: 1px dashed 
+var(--border);
+ [2m361[0m | 
+[35;1m|[0m              
+text-align: center;
+ [2m362[0m | 
+[35;1m|[0m              
+cursor: pointer;
+ [2m363[0m | 
+[35;1m|[0m              
+position: relative;
+ [2m364[0m | 
+[35;1m|[0m              
+overflow: hidden;
+ [2m365[0m | 
+[35;1m|[0m              
+transition: 0.3s;
+ [2m366[0m | 
+[35;1m|[0m           }
+ [2m367[0m | 
+[35;1m|[0m           
+.upload-area:hover { 
+border-color: 
+var(--primary); 
+background: rgba(139, 61, 
+255, 0.03); }
+ [2m368[0m | 
+[35;1m|[0m           
+.upload-area.scanning { 
+border-style: solid; 
+border-color: 
+var(--primary); }
+ [2m369[0m | 
+[35;1m|[0m           
+ [2m370[0m | 
+[35;1m|[0m           
+.holographic-line {
+ [2m371[0m | 
+[35;1m|[0m              
+position: absolute;
+ [2m372[0m | 
+[35;1m|[0m              
+top: 0;
+ [2m373[0m | 
+[35;1m|[0m              
+left: 0;
+ [2m374[0m | 
+[35;1m|[0m              
+width: 100%;
+ [2m375[0m | 
+[35;1m|[0m              
+height: 2px;
+ [2m376[0m | 
+[35;1m|[0m              
+background: 
+var(--primary);
+ [2m377[0m | 
+[35;1m|[0m              
+box-shadow: 0 0 15px 
+var(--primary-glow);
+ [2m378[0m | 
+[35;1m|[0m              
+animation: h-scan 2s 
+infinite ease-in-out;
+ [2m379[0m | 
+[35;1m|[0m              
+z-index: 10;
+ [2m380[0m | 
+[35;1m|[0m           }
+ [2m381[0m | 
+[35;1m|[0m           
+@keyframes h-scan {
+ [2m382[0m | 
+[35;1m|[0m              
+0% { top: 0%; opacity: 0; 
+}
+ [2m383[0m | 
+[35;1m|[0m              
+50% { opacity: 1; }
+ [2m384[0m | 
+[35;1m|[0m              
+100% { top: 100%; 
+opacity: 0; }
+ [2m385[0m | 
+[35;1m|[0m           }
+ [2m386[0m | [35;1m`[0
+m[35;1m-[0m[35;1m>[0m 
+      `}</style>
+ [2m387[0m |         
+</aside>
+ [2m388[0m |       );
+ [2m389[0m |     }
+     `----
+
+Import trace for 
+requested module:
+./components/side-panel-co
+ntent.tsx
+./components/editor-shell.
+tsx
+./components/dynamic-edito
+r-shell.tsx
+
+
+> Build failed because of 
+webpack errors

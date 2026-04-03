@@ -22,7 +22,13 @@ import {
   Copy,
   Activity,
   Sparkles,
-  Rocket
+  Rocket,
+  Share2,
+  Cpu,
+  NotebookPen,
+  Zap,
+  MessageSquare,
+  Flame
 } from "lucide-react";
 
 import {
@@ -47,6 +53,13 @@ import { CanvasHeader } from "./canvas-header";
 import { EditorSidebar } from "./editor-sidebar";
 import { SidePanelContent } from "./side-panel-content";
 import { PresentationMode } from "./presentation-mode";
+import { ShareModal } from "./share-modal";
+import { AppHeader } from "./app-header";
+import { StrategyMatrix } from "./strategy-matrix";
+import { NeuralHeatmap } from "./neural-heatmap";
+import { calculateStrategicDNA } from "../lib/strategic-intelligence";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 
 interface EditorShellProps {
   designId: string;
@@ -63,7 +76,7 @@ interface LocalDesignRecord {
   workspaceId?: string;
 }
 
-type SidebarTab = "content" | "protocols" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export" | "ai";
+type SidebarTab = "content" | "protocols" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export" | "ai" | "scratchpad";
 
 export default function EditorShell({ designId }: EditorShellProps) {
   const useRemote = isUuid(designId);
@@ -84,14 +97,59 @@ export default function EditorShell({ designId }: EditorShellProps) {
   const [title, setTitle] = useState(documentState.title);
   const [saveMessage, setSaveMessage] = useState("");
   const [loading, setLoading] = useState(useRemote);
-  const [activeTab, setActiveTab] = useState<SidebarTab>("elements");
+  const [activeTab, setActiveTab] = useState<SidebarTab>("ai");
   const [zoom, setZoom] = useState(0.8);
   const [isPresenting, setIsPresenting] = useState(false);
   const [isSidebarOpen] = useState(true);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  
+  const { score: dnaScore } = calculateStrategicDNA(fabricRef.current);
   
   // Pillar 1: Logic Engine State
   const [isLinking, setIsLinking] = useState(false);
+  const [isMatrixActive, setIsMatrixActive] = useState(false);
+  const [isHeatmapActive, setIsHeatmapActive] = useState(false);
   const [linkSource, setLinkSource] = useState<string | null>(null);
+  
+  // Phase 23.4: Ghost Suggestions Engine
+  const { sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/intelligence" }),
+    onFinish: ({ message }) => {
+       if (message.parts && fabricRef.current) {
+          message.parts.forEach((part: any) => {
+             if (part.type === 'tool-invocation' && part.toolInvocation.toolName === 'executeStrategicAction') {
+                const { action, data } = part.toolInvocation.args;
+                if (action === 'add_logic_node' && data) {
+                   const canvas = fabricRef.current!;
+                   addTextbox(canvas, { 
+                      left: data.left || 300, 
+                      top: data.top || 300, 
+                      text: data.text || "AI_SUGGESTION",
+                   } as any);
+                   // Set 0.3 opacity to the newly created object
+                   const objects = canvas.getObjects();
+                   const lastObj = objects[objects.length - 1];
+                   if (lastObj) {
+                      lastObj.set({ opacity: 0.3 });
+                      canvas.renderAll();
+                   }
+                   setSaveMessage("NEURAL_GHOST_MATERIALIZED");
+                }
+             }
+          });
+       }
+    }
+  });
+
+  const isGhosting = status === 'streaming' || status === 'submitted';
+
+  const triggerNeuralGhosting = useCallback(() => {
+     if (!fabricRef.current || isGhosting) return;
+     const currentJson = JSON.stringify(serializeCanvas(fabricRef.current));
+     sendMessage({
+        text: `Analyze current strategy and suggest ONE logical next-step node. JSON: ${currentJson.substring(0, 500)}`
+     });
+  }, [sendMessage, isGhosting]);
   
   const [pages, setPages] = useState<Array<{ id: string; json: any }>>([{ id: "page-1", json: null }]);
   const [activePageIndex, setActivePageIndex] = useState(0);
@@ -281,7 +339,53 @@ export default function EditorShell({ designId }: EditorShellProps) {
   };
 
   return (
-    <div className="app-container">
+    <div className="app-container" style={{ padding: "20px" }}>
+<style jsx>{`
+  .strategic-actions {
+     margin-bottom: 20px;
+     height: 56px;
+     display: flex;
+     align-items: center;
+     justify-content: flex-end;
+     padding: 0 20px;
+     background: rgba(13, 16, 23, 0.4) !important;
+     border-radius: 12px;
+     border: 1px solid rgba(255,255,255,0.05);
+  }
+  .sidebar-icon:hover {
+    color: var(--primary);
+    background: rgba(139, 61, 255, 0.05);
+  }
+  .sidebar-icon.active {
+    color: var(--primary);
+    background: rgba(139, 61, 255, 0.1);
+    border-left: 2px solid var(--primary);
+  }
+  .glow-matrix {
+     color: var(--primary) !important;
+     box-shadow: inset 0 0 10px var(--primary-glow);
+     animation: matrix-pulse 2s infinite;
+  }
+  .glow-heatmap {
+     color: var(--danger) !important;
+     box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.4);
+     animation: heatmap-pulse 2s infinite;
+  }
+  @keyframes matrix-pulse {
+     0%, 100% { opacity: 1; }
+     50% { opacity: 0.6; }
+  }
+  @keyframes heatmap-pulse {
+     0%, 100% { transform: scale(1); opacity: 1; }
+     50% { transform: scale(1.1); opacity: 0.8; }
+  }
+  .sidebar-divider {
+    width: 20px;
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0;
+  }
+`}</style>
       <AnimatePresence>
         {loading && (
           <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} className="loading-overlay" style={{ position: "fixed", inset: 0, zIndex: 9991, background: "#0a0a0b", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -290,30 +394,48 @@ export default function EditorShell({ designId }: EditorShellProps) {
         )}
       </AnimatePresence>
 
-      <div className="header-glass glass-panel">
-         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <div style={{ width: 32, height: 32, background: "var(--primary)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}><Layout size={18} color="white" /></div>
-            <input value={title} onChange={e => setTitle(e.target.value)} style={{ background: "transparent", border: "none", color: "white", fontSize: 16, fontWeight: 700, width: 240, outline: "none" }} />
-         </div>
+      <AppHeader 
+        title={title} 
+        subtitle="EDITING_PROTOCOL_ACTIVE" 
+        showBackHome={true} 
+        dnaScore={dnaScore}
+      />
+
+      <div className="strategic-actions glass-panel">
          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span className="muted-text">{saveMessage}</span>
+            <span className="muted-text" style={{ fontSize: "11px" }}>{saveMessage}</span>
             <button onClick={undo} className="sidebar-icon" title="Undo"><Undo2 size={18} /></button>
             <button onClick={redo} className="sidebar-icon" title="Redo"><Redo2 size={18} /></button>
+            <button onClick={triggerNeuralGhosting} className={`sidebar-icon ${isGhosting ? 'active animate-pulse' : ''}`} title="Trigger Ghost Suggestion"><Sparkles size={18} /></button>
             <button onClick={saveNow} className="btn-pro btn-primary">Save Strategy</button>
+            <button onClick={() => setIsShareModalOpen(true)} className="btn-pro btn-secondary" style={{ gap: "8px" }}><Share2 size={16} /> Share</button>
             <button onClick={() => setIsPresenting(true)} className="btn-pro btn-secondary"><Maximize size={16} /> Present</button>
          </div>
       </div>
 
       <div className="main-layout">
          <aside className="sidebar-minimal">
-            <button onClick={() => setActiveTab("elements")} className={`sidebar-icon ${activeTab === "elements" ? "active" : ""}`}><Square size={20} /></button>
-            <button onClick={() => setActiveTab("text")} className={`sidebar-icon ${activeTab === "text" ? "active" : ""}`}><Type size={20} /></button>
-            <button onClick={() => setActiveTab("uploads")} className={`sidebar-icon ${activeTab === "uploads" ? "active" : ""}`}><CloudUpload size={20} /></button>
-            <button onClick={() => setActiveTab("content")} className={`sidebar-icon ${activeTab === "content" ? "active" : ""}`} title="Logic Layer"><Activity size={20} /></button>
-            <button onClick={() => setActiveTab("protocols")} className={`sidebar-icon ${activeTab === "protocols" ? "active" : ""}`} title="Protocol Library"><Rocket size={20} /></button>
-            <button onClick={() => setActiveTab("brand")} className={`sidebar-icon ${activeTab === "brand" ? "active" : ""}`}><Settings size={20} /></button>
+            <button onClick={() => setActiveTab("ai")} className={`sidebar-icon ${activeTab === 'ai' ? 'active' : ''}`} title="AI Orchestrator">
+               <Cpu size={20} />
+            </button>
+            <button onClick={() => setActiveTab("scratchpad")} className={`sidebar-icon ${activeTab === 'scratchpad' ? 'active' : ''}`} title="Drafting Scratchpad">
+               <NotebookPen size={20} />
+            </button>
+            <button onClick={() => setIsMatrixActive(!isMatrixActive)} className={`sidebar-icon ${isMatrixActive ? 'active glow-matrix' : ''}`} title="Neural Matrix">
+               <Activity size={20} />
+            </button>
+            <button onClick={() => setIsHeatmapActive(!isHeatmapActive)} className={`sidebar-icon ${isHeatmapActive ? 'active glow-heatmap' : ''}`} title="Strategic Tension">
+               <Flame size={20} />
+            </button>
+            <div className="sidebar-divider" />
+            <button onClick={() => setActiveTab("elements")} className={`sidebar-icon ${activeTab === "elements" ? "active" : ""}`} title="Elements"><Square size={20} /></button>
+            <button onClick={() => setActiveTab("text")} className={`sidebar-icon ${activeTab === "text" ? "active" : ""}`} title="Typography"><Type size={20} /></button>
+            <button onClick={() => setActiveTab("uploads")} className={`sidebar-icon ${activeTab === "uploads" ? "active" : ""}`} title="Strategic Assets"><CloudUpload size={20} /></button>
+            <button onClick={() => setActiveTab("protocols")} className={`sidebar-icon ${activeTab === "protocols" ? "active" : ""}`} title="Protocol Library"><Zap size={20} /></button>
+            <button onClick={() => setActiveTab("brand")} className={`sidebar-icon ${activeTab === "brand" ? "active" : ""}`} title="Brand Kit"><Settings size={20} /></button>
             <div style={{ flex: 1 }} />
             <button onClick={() => setActiveTab("layers")} className={`sidebar-icon ${activeTab === "layers" ? "active" : ""}`} title="Scene Tree"><Layers size={20} /></button>
+            <button onClick={() => setActiveTab("review")} className={`sidebar-icon ${activeTab === "review" ? "active" : ""}`} title="Approval Workflows"><MessageSquare size={20} /></button>
          </aside>
 
          <AnimatePresence>
@@ -339,8 +461,11 @@ export default function EditorShell({ designId }: EditorShellProps) {
          </AnimatePresence>
 
          <section ref={containerRef} className="canvas-viewport">
-            <div className="canvas-grid" />
-            <canvas ref={canvasElementRef} />
+            <div className="canvas-viewport" id="canvas-container">
+              <canvas id="fabric-canvas" ref={canvasElementRef} />
+              <StrategyMatrix canvas={fabricRef.current} active={isMatrixActive} />
+              <NeuralHeatmap canvas={fabricRef.current} active={isHeatmapActive} />
+            </div>
             <div className="floating-tools glass-panel">
                <button onClick={() => fabricRef.current?.setZoom(1)} className="sidebar-icon" title="Pointer"><MousePointer2 size={18} /></button>
                <button onClick={() => fabricRef.current && removeSelectedObject(fabricRef.current)} className="sidebar-icon" title="Delete"><Trash2 size={18} /></button>
@@ -356,6 +481,13 @@ export default function EditorShell({ designId }: EditorShellProps) {
 
       <AnimatePresence>
         {isPresenting && <PresentationMode canvas={fabricRef.current} onClose={() => setIsPresenting(false)} />}
+        {isShareModalOpen && (
+          <ShareModal 
+            designId={designId} 
+            designTitle={title} 
+            onClose={() => setIsShareModalOpen(false)} 
+          />
+        )}
       </AnimatePresence>
     </div>
   );

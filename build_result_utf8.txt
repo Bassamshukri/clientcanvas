@@ -1,0 +1,68 @@
+﻿
+> clientcanvas@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.5.14
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 8.7s
+   Linting and checking validity of types ...
+node.exe : Failed to 
+compile.
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (F  
+  ailed to compile.:Str   
+ ing) [], RemoteExcept    
+ion
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+
+./app/api/intelligence/rou
+te.ts:41:9
+Type error: No overload 
+matches this call.
+  The last overload gave 
+the following error.
+    Type '(params: any) 
+=> Promise<any>' is not 
+assignable to type 
+'undefined'.
+
+[0m [90m 39 |[39m      
+     reasoning[33m:[39m 
+z[33m.[39mstring()[33m.
+[39mdescribe([32m"Explai
+n why this action is the 
+logical next step."[39m)
+ [90m 40 |[39m         
+})[33m,[39m
+[31m[1m>[22m[39m[90m 
+41 |[39m         
+execute[33m:[39m 
+[36masync[39m (params) 
+[33m=>[39m {
+ [90m    |[39m         
+[31m[1m^[22m[39m
+ [90m 42 |[39m          
+ [36mreturn[39m { 
+status[33m:[39m [32m"AC
+TION_DEPLOYED"[39m[33m,
+[39m [33m...[39mparams 
+}[33m;[39m
+ [90m 43 |[39m         }
+ [90m 44 |[39m       
+})[0m
+Next.js build worker 
+exited with code: 1 and 
+signal: null

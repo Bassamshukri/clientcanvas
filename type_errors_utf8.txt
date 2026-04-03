@@ -1,0 +1,10 @@
+﻿app/api/intelligence/route.ts(33,5): error TS2353: Object literal may only specify known properties, and 'maxSteps' does not exist in type 'CallSettings & (Prompt & { model: LanguageModel; tools?: { executeStrategicAction: Tool<any, any>; }; toolChoice?: ToolChoice<{ executeStrategicAction: Tool<...>; }>; ... 23 more ...; _internal?: { ...; }; })'.
+app/api/intelligence/route.ts(42,9): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '({ action, data, reasoning }: { action: any; data: any; reasoning: any; }) => Promise<{ status: string; action: any; data: any; reasoning: any; }>' is not assignable to type 'undefined'.
+app/api/intelligence/route.ts(49,17): error TS2551: Property 'toDataStreamResponse' does not exist on type 'StreamTextResult<{ executeStrategicAction: Tool<any, any>; }, Output<string, string, never>>'. Did you mean 'toTextStreamResponse'?
+app/api/stratosphere/route.ts(42,9): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '({ framework, nodes }: { framework: any; nodes: any; }) => Promise<{ status: string; framework: any; nodes: any; }>' is not assignable to type 'undefined'.
+app/api/stratosphere/route.ts(49,17): error TS2551: Property 'toDataStreamResponse' does not exist on type 'StreamTextResult<{ generateStrategicLayout: Tool<any, any>; }, Output<string, string, never>>'. Did you mean 'toTextStreamResponse'?
+components/side-panel-content.tsx(291,37): error TS2741: Property 'onPushHistory' is missing in type '{ canvas: Canvas; brandColors: { primary: string; secondary: string; accent: string; fontFamily: string; }; }' but required in type '{ canvas: Canvas; brandColors?: any; onPushHistory: () => void; }'.

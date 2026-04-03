@@ -1,0 +1,168 @@
+﻿python : C:\Users\bassa
+\Documents\clientcanvas
+\scripts\video-ai\auto_
+shorts.py:4: 
+FutureWarning: 
+At line:1 char:1
++ python 
+auto_shorts.py 
+"Success Mindset" > 
+output_robustness.txt 
+2>&1
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~
+    + CategoryInfo     
+         : 
+NotSpecified: (C    
+:\Users\bassa\...Futu  
+  reWarning: :String) 
+[    ], RemoteException
+    + 
+FullyQualifiedError    
+Id : NativeCommandErr  
+  or
+ 
+
+All support for the 
+`google.generativeai` 
+package has ended. It 
+will no longer be 
+receiving 
+updates or bug fixes. 
+Please switch to the 
+`google.genai` package 
+as soon as possible.
+See README for more 
+details:
+
+https://github.com/goog
+le-gemini/deprecated-ge
+nerative-ai-python/blob
+/main/README.md
+
+  import 
+google.generativeai as 
+genai
+Synthesizing script for topic: Success Mindset...
+Gemini Error: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Using fallback data contract...
+Generating neural voiceover...
+Creating synchronization map (SRT)...
+Acquiring 10 portrait visuals...
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+Traceback (most recent 
+call last):
+  File "C:\Users\bassa\
+Documents\clientcanvas\
+scripts\video-ai\auto_s
+horts.py", line 180, 
+in start_factory
+    assemble_video(run_
+dir, clips, 
+spec["segments"])
+  File "C:\Users\bassa\
+Documents\clientcanvas\
+scripts\video-ai\auto_s
+horts.py", line 130, 
+in assemble_video
+    print("\U0001f3ac 
+Initializing master 
+assembly (CPU 
+Only)...")
+  File "C:\Users\bassa\
+AppData\Local\Programs\
+Python\Python311\Lib\en
+codings\cp1252.py", 
+line 19, in encode
+    return codecs.charm
+ap_encode(input,self.er
+rors,encoding_table)[0]
+           ^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 
+'charmap' codec can't 
+encode character 
+'\U0001f3ac' in 
+position 0: character 
+maps to <undefined>
+
+During handling of the 
+above exception, 
+another exception 
+occurred:
+
+Traceback (most recent 
+call last):
+  File "C:\Users\bassa\
+Documents\clientcanvas\
+scripts\video-ai\auto_s
+horts.py", line 187, 
+in <module>
+    asyncio.run(start_f
+actory(t))
+  File "C:\Users\bassa\
+AppData\Local\Programs\
+Python\Python311\Lib\as
+yncio\runners.py", 
+line 190, in run
+    return 
+runner.run(main)
+           
+^^^^^^^^^^^^^^^^
+  File "C:\Users\bassa\
+AppData\Local\Programs\
+Python\Python311\Lib\as
+yncio\runners.py", 
+line 118, in run
+    return self._loop.r
+un_until_complete(task)
+           ^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bassa\
+AppData\Local\Programs\
+Python\Python311\Lib\as
+yncio\base_events.py", 
+line 654, in 
+run_until_complete
+    return 
+future.result()
+           
+^^^^^^^^^^^^^^^
+  File "C:\Users\bassa\
+Documents\clientcanvas\
+scripts\video-ai\auto_s
+horts.py", line 182, 
+in start_factory
+    print(f"CRITICAL_FA
+ILURE: {traceback.forma
+t_exc()}")
+  File "C:\Users\bassa\
+AppData\Local\Programs\
+Python\Python311\Lib\en
+codings\cp1252.py", 
+line 19, in encode
+    return codecs.charm
+ap_encode(input,self.er
+rors,encoding_table)[0]
+           ^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 
+'charmap' codec can't 
+encode character 
+'\U0001f3ac' in 
+position 336: 
+character maps to 
+<undefined>

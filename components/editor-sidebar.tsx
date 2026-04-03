@@ -12,10 +12,11 @@ import {
   Hand,
   PenTool,
   MessageSquare,
-  Code
+  Code,
+  Zap
 } from "lucide-react";
 
-type SidebarTab = "content" | "templates" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export";
+type SidebarTab = "content" | "templates" | "elements" | "text" | "brand" | "uploads" | "draw" | "layers" | "review" | "export" | "motion";
 
 interface EditorSidebarProps {
   activeTab: SidebarTab;
@@ -26,6 +27,7 @@ export function EditorSidebar({ activeTab, onTabChange }: EditorSidebarProps) {
   const tabs: { id: SidebarTab; label: string; icon: React.ReactNode }[] = [
     { id: "templates", label: "Templates", icon: <Layout size={20} /> },
     { id: "elements", label: "Elements", icon: <Square size={20} /> },
+    { id: "motion", label: "Motion", icon: <Zap size={20} /> },
     { id: "text", label: "Text", icon: <Type size={20} /> },
     { id: "uploads", label: "Uploads", icon: <CloudUpload size={20} /> },
     { id: "draw", label: "Draw", icon: <PenTool size={20} /> },

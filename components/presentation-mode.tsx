@@ -16,6 +16,10 @@ import {
   Command
 } from "lucide-react";
 
+import { AppHeader } from "./app-header";
+import { calculateStrategicDNA } from "../lib/strategic-intelligence";
+import { getStrategicSequence } from "../lib/fabric-layout";
+
 interface PresentationModeProps {
   canvas: Canvas | null;
   onClose: () => void;
@@ -23,21 +27,45 @@ interface PresentationModeProps {
 
 export function PresentationMode({ canvas, onClose }: PresentationModeProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const totalSlides = 1; // For now, we present the whole infinite canvas as a single protocol board
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const sequence = getStrategicSequence(canvas);
+  const totalSlides = sequence.length || 1;
+
+  const focusNode = useCallback((index: number) => {
+     if (!canvas || !sequence[index]) return;
+     const node = sequence[index];
+     
+     // Cinematic Pan & Zoom
+     const zoom = 1.2;
+     const vpt = canvas.viewportTransform;
+     if (vpt) {
+       vpt[0] = zoom;
+       vpt[1] = 0;
+       vpt[2] = 0;
+       vpt[3] = zoom;
+       vpt[4] = (canvas.width! / 2) - (node.left! * zoom) - (node.width! * zoom / 2);
+       vpt[5] = (canvas.height! / 2) - (node.top! * zoom) - (node.height! * zoom / 2);
+       canvas.requestRenderAll();
+     }
+  }, [canvas, sequence]);
 
   useEffect(() => {
     if (!canvas) return;
-    
-    // Strategic Presentation Focus: 
-    // Center the whole canvas at a healthy zoom level for presentation
-    canvas.setZoom(0.85);
-    const vpt = canvas.viewportTransform;
-    if (vpt) {
-       vpt[4] = (canvas.width! - 1080 * 0.85) / 2;
-       vpt[5] = (canvas.height! - 1080 * 0.85) / 2;
+    if (sequence.length > 0) {
+       focusNode(currentSlide);
+    } else {
+       canvas.setZoom(0.85);
        canvas.requestRenderAll();
     }
-  }, [canvas]);
+  }, [canvas, currentSlide, focusNode, sequence.length]);
+
+  useEffect(() => {
+     if (!isAutoPlaying || !canvas) return;
+     const interval = setInterval(() => {
+        setCurrentSlide(prev => (prev + 1) % totalSlides);
+     }, 5000);
+     return () => clearInterval(interval);
+  }, [isAutoPlaying, totalSlides, canvas]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -71,18 +99,18 @@ export function PresentationMode({ canvas, onClose }: PresentationModeProps) {
       <div className="hud-header glass-panel">
          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <div className="hud-badge">
-               <Activity size={14} className="animate-pulse" /> PROTOCOL_ACTIVE
+               <Activity size={14} className={isAutoPlaying ? "animate-pulse" : ""} /> {isAutoPlaying ? "AUTONOMIC_SEQUENCE_ACTIVE" : "MANUAL_DELIBERATION"}
             </div>
             <div style={{ width: 1, height: 16, background: "rgba(255,255,255,0.1)" }} />
             <h2 style={{ fontSize: 13, fontWeight: "800", letterSpacing: "1px", margin: 0, opacity: 0.8 }}>
-               STRATEGIC_OPERATIONS_MODE // CL-NAV_V0.3
+               STRATEGIC_OPERATIONS_MODE // CL-NAV_V0.9
             </h2>
          </div>
 
          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div className="hud-stat">
-               <span style={{ fontSize: 10, opacity: 0.5 }}>COORDINATES</span>
-               <span style={{ fontSize: 11, fontWeight: "700" }}>34.05 / -118.24</span>
+               <span style={{ fontSize: 10, opacity: 0.5 }}>LATENCY</span>
+               <span style={{ fontSize: 11, fontWeight: "700" }}>32MS_NOMINAL</span>
             </div>
             <button onClick={onClose} className="hud-exit-btn">
                <X size={18} /> ESC
@@ -111,18 +139,46 @@ export function PresentationMode({ canvas, onClose }: PresentationModeProps) {
       {/* Strategic Controls HUD */}
       <div className="hud-footer">
           <div className="hud-controls glass-panel">
-             <button className="hud-nav-btn"><ChevronLeft size={20} /></button>
-             <div style={{ padding: "0 20px", borderLeft: "1px solid rgba(255,255,255,0.1)", borderRight: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", gap: 10 }}>
-                <Layout size={16} color="var(--primary)" />
-                <span style={{ fontSize: 13, fontWeight: "800" }}>PROTOCOL_BOARD_01</span>
+             <button onClick={() => setCurrentSlide(prev => (prev - 1 + totalSlides) % totalSlides)} className="hud-nav-btn"><ChevronLeft size={20} /></button>
+             <div style={{ padding: "0 24px", borderLeft: "1px solid rgba(255,255,255,0.1)", borderRight: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ fontSize: 10, fontWeight: "800", opacity: 0.5 }}>LOGIC_NODE</div>
+                <span style={{ fontSize: 14, fontWeight: "900", color: "var(--primary)" }}>{String(currentSlide + 1).padStart(2, '0')}</span>
+                <div style={{ width: 1, height: 16, background: "rgba(255,255,255,0.1)" }} />
+                <span style={{ fontSize: 13, fontWeight: "800" }}>{sequence[currentSlide]?.id?.toUpperCase() || "STRATEGIC_PROTOCOL"}</span>
              </div>
-             <button className="hud-nav-btn"><ChevronRight size={20} /></button>
+             <button onClick={() => setCurrentSlide(prev => (prev + 1) % totalSlides)} className="hud-nav-btn"><ChevronRight size={20} /></button>
           </div>
 
           <div style={{ position: "absolute", bottom: 40, left: 40, display: "flex", gap: 12 }}>
+             <button 
+               onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+               className={`hud-mini-stat btn-telemetry ${isAutoPlaying ? 'active' : ''}`}
+             >
+                <Zap size={14} /> {isAutoPlaying ? "STOP_AUTO" : "AUTO_PLAY"}
+             </button>
              <div className="hud-mini-stat"><Monitor size={14} /> 4K_UHD</div>
              <div className="hud-mini-stat"><Command size={14} /> SYNCED</div>
           </div>
+
+          {/* Node Metadata Card */}
+          <AnimatePresence mode="wait">
+             <motion.div 
+               key={currentSlide}
+               initial={{ opacity: 0, x: 20 }}
+               animate={{ opacity: 1, x: 0 }}
+               exit={{ opacity: 0, x: -20 }}
+               className="node-telemetry-card glass-panel"
+             >
+                <div className="badge">Tactical Metadata</div>
+                <h4 style={{ margin: "8px 0", fontSize: "14px", fontWeight: "900" }}>{sequence[currentSlide]?.id?.split('-')[0].toUpperCase()}</h4>
+                <div style={{ fontSize: "11px", opacity: 0.6, lineHeight: "1.6" }}>
+                   This logical node represents a core protocol element. Current impact alignment is nominal.
+                </div>
+                <div style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "8px", fontSize: "10px", color: "var(--primary)", fontWeight: "800" }}>
+                   <Activity size={12} /> TELEMETRY_STABLE
+                </div>
+             </motion.div>
+          </AnimatePresence>
       </div>
 
       <style jsx>{`
@@ -251,6 +307,29 @@ export function PresentationMode({ canvas, onClose }: PresentationModeProps) {
            0%, 100% { opacity: 0.5; transform: scale(1); }
            50% { opacity: 1; transform: scale(1.1); }
         }
+         .btn-telemetry {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+         }
+         .btn-telemetry:hover { background: rgba(255,255,255,0.1); }
+         .btn-telemetry.active { background: var(--primary); border-color: var(--primary); color: white; }
+         
+         .node-telemetry-card {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 280px;
+            padding: 20px;
+            background: rgba(13, 16, 23, 0.8) !important;
+            border: 1px solid rgba(139, 61, 255, 0.2);
+            border-radius: 16px;
+            text-align: left;
+         }
       `}</style>
     </motion.div>
   );

@@ -1,0 +1,50 @@
+﻿updates or bug fixes. 
+Please switch to the 
+`google.genai` package as 
+soon as possible.
+See README for more 
+details:
+
+https://github.com/google-
+gemini/deprecated-generati
+ve-ai-python/blob/main/REA
+DME.md
+
+  import 
+google.generativeai as 
+genai
+Synthesizing script for topic: Work Life Balance...
+Gemini Error: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Using fallback data contract...
+Generating neural voiceover...
+Creating synchronization map (SRT)...
+Acquiring 10 portrait visuals...
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+   - Pexels Response (business office): 200
+Initializing master assembly (CPU Only)...
+ASSEMBLY FAILURE: Traceback (most recent call last):
+  File "C:\Users\bassa\Documents\clientcanvas\scripts\video-ai\auto_shorts.py", line 150, in assemble_video
+    txt = TextClip(
+          ^^^^^^^^^
+  File "C:\Users\bassa\AppData\Local\Programs\Python\Python311\Lib\site-packages\decorator.py", line 235, in fun
+    return caller(func, *(extras + args), **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bassa\AppData\Local\Programs\Python\Python311\Lib\site-packages\moviepy\decorators.py", line 102, in wrapper
+    return func(*new_args, **new_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bassa\AppData\Local\Programs\Python\Python311\Lib\site-packages\moviepy\video\VideoClip.py", line 1703, in __init__
+    img = Image.new(img_mode, (img_width, img_height), color=bg_color)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bassa\AppData\Local\Programs\Python\Python311\Lib\site-packages\PIL\Image.py", line 3117, in new
+    return im._new(core.fill(mode, size, color))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'float' object cannot be interpreted as an integer
+

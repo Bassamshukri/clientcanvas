@@ -4,7 +4,9 @@ import Link from "next/link";
 import { AppHeader } from "./app-header";
 import { CreateWorkspaceForm } from "./create-workspace-form";
 import { motion } from "framer-motion";
-import { Layout, Plus, ArrowRight, Briefcase, Zap, Rocket, User, Search, Activity } from "lucide-react";
+import { Layout, Plus, ArrowRight, Briefcase, Zap, Rocket, User, Layers, Activity, TrendingUp, Cpu, BarChart3, Sparkles, Brain } from "lucide-react";
+import { useCompletion } from "@ai-sdk/react";
+import { useToast } from "./strategic-toast";
 import { ActivityFeed } from "./activity-feed";
 
 interface DashboardHomeProps {
@@ -33,8 +35,56 @@ const itemAttr = {
 };
 
 export function DashboardHome({ userEmail, workspaces }: DashboardHomeProps) {
+  const { completion, complete, isLoading: isBriefing } = useCompletion({
+    api: "/api/intelligence",
+    initialCompletion: "Initializing strategic overview... Analysis indicates 98.4% nominal logic moats across current fleets. Recommendation: Deepen APAC market analysis in Protocol Alpha-3.",
+  });
   return (
     <div style={{ minHeight: "100vh", overflowY: "auto", background: "var(--bg)", backgroundImage: "var(--bg-dots)", backgroundSize: "32px 32px", paddingBottom: "100px" }}>
+      <style jsx global>{`
+        .welcome-hud { margin-bottom: 24px; }
+        .drift-telemetry {
+           padding: 24px;
+           background: rgba(13,16,23,0.6) !important;
+           border-radius: 20px;
+           margin-bottom: 32px;
+           overflow: hidden;
+           position: relative;
+        }
+        .telemetry-icon {
+           width: 40px;
+           height: 40px;
+           background: rgba(139,61,255,0.1);
+           border-radius: 12px;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+        }
+        .telemetry-stat {
+           text-align: right;
+           display: flex;
+           flex-direction: column;
+        }
+        .drift-chart-container {
+           position: relative;
+           height: 120px;
+           background: rgba(0,0,0,0.2);
+           border-radius: 12px;
+           overflow: hidden;
+           display: flex;
+           align-items: center;
+        }
+        .drift-chart-pulse {
+           position: absolute;
+           inset: 0;
+           background: linear-gradient(90deg, transparent, rgba(139,61,255,0.05), transparent);
+           animation: chart-scan 4s infinite linear;
+        }
+        @keyframes chart-scan {
+           0% { transform: translateX(-100%); }
+           100% { transform: translateX(100%); }
+        }
+      `}</style>
       <main className="shell">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -48,6 +98,55 @@ export function DashboardHome({ userEmail, workspaces }: DashboardHomeProps) {
             showBackHome={false}
           />
         </motion.div>
+
+        {/* Welcome HUD */}
+        <section className="welcome-hud stack" style={{ gap: "8px", marginTop: "24px" }}>
+          <h1 style={{ fontSize: "32px", fontWeight: "900", letterSpacing: "-1px", margin: 0 }}>MISSION_CONTROL // READY</h1>
+          <p className="muted-text" style={{ fontSize: "14px", fontWeight: "600", letterSpacing: "1px" }}>WELCOME_BACK, ARCHITECT. NEURAL_SYNC: 99.8%_NOMINAL.</p>
+        </section>
+
+        {/* Global Strategic Drift Telemetry */}
+        <section className="drift-telemetry glass-panel">
+           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                 <div className="telemetry-icon"><TrendingUp size={18} color="var(--primary)" /></div>
+                 <div>
+                    <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "800" }}>GLOBAL_STRATEGIC_DRIFT</h3>
+                    <span className="muted-text" style={{ fontSize: "11px", fontWeight: "700" }}>REAL-TIME_FLEET_ANALYSIS</span>
+                 </div>
+              </div>
+              <div className="telemetry-stat">
+                 <span style={{ fontSize: "10px", opacity: 0.5 }}>ACTIVE_PROTOCOLS</span>
+                 <span style={{ fontSize: "18px", fontWeight: "900" }}>14</span>
+              </div>
+           </div>
+           
+           <div className="drift-chart-container">
+              <div className="drift-chart-pulse" />
+              <svg viewBox="0 0 800 120" style={{ width: "100%", height: "120px" }}>
+                 <motion.path 
+                   initial={{ pathLength: 0 }}
+                   animate={{ pathLength: 1 }}
+                   transition={{ duration: 2 }}
+                   d="M0 60 Q 100 20, 200 80 T 400 40 T 600 90 T 800 50" 
+                   fill="none" 
+                   stroke="var(--primary)" 
+                   strokeWidth="2"
+                   style={{ opacity: 0.5 }}
+                 />
+                 <motion.path 
+                   initial={{ pathLength: 0 }}
+                   animate={{ pathLength: 1 }}
+                   transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
+                   d="M0 70 Q 150 40, 300 90 T 450 30 T 600 80 T 800 60" 
+                   fill="none" 
+                   stroke="var(--success)" 
+                   strokeWidth="1"
+                   style={{ opacity: 0.3 }}
+                 />
+              </svg>
+           </div>
+        </section>
 
         <div style={{ 
           display: "grid", 
@@ -163,6 +262,27 @@ export function DashboardHome({ userEmail, workspaces }: DashboardHomeProps) {
             className="stack" 
             style={{ gap: "24px" }}
           >
+             {/* Intelligence Briefing - v3.3.0 */}
+             <div className="glass-card panelCard" style={{ padding: "24px", position: "relative", overflow: "hidden", border: "1px solid var(--primary-glow)", background: "rgba(139, 61, 255, 0.03)" }}>
+                <div style={{ position: "absolute", top: 0, right: 0, padding: "12px" }}><Sparkles size={14} color="var(--primary)" /></div>
+                <div className="badge">Intelligence Briefing</div>
+                <div style={{ marginTop: "20px" }}>
+                   <p style={{ fontSize: "13px", lineHeight: "1.6", color: "white", opacity: 0.9, fontStyle: "italic" }}>
+                      {completion || "Awaiting strategic signal..."}
+                   </p>
+                </div>
+                <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+                   <button 
+                     onClick={() => complete("Analyze fleet status and suggest 3 strategic priorities.")}
+                     className={`btn-pro ${isBriefing ? 'btn-secondary' : 'btn-primary'}`} 
+                     style={{ fontSize: "10px", width: "100%", height: "40px" }}
+                     disabled={isBriefing}
+                   >
+                      <Brain size={14} /> {isBriefing ? "SYNTHESIZING..." : "REFRESH_INTELLIGENCE"}
+                   </button>
+                </div>
+             </div>
+
              <ActivityFeed items={[
                 { id: "1", kind: "publish_job", title: "Global Protocol Sync", subtitle: "Fleet Delta initialized", createdAt: new Date().toISOString() },
                 { id: "2", kind: "design", title: "New Strategic Asset", subtitle: "High-fidelity node added", createdAt: new Date(Date.now() - 3600000).toISOString() },

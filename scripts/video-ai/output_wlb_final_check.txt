@@ -1,0 +1,20 @@
+﻿   - Pexels Response (business office): 200
+Initializing master assembly (CPU Only)...
+ASSEMBLY FAILURE: Traceback (most recent call last):
+  File "C:\Users\bassa\Documents\clientcanvas\scripts\video-ai\auto_shorts.py", line 150, in assemble_video
+    txt = TextClip(
+          ^^^^^^^^^
+  File "C:\Users\bassa\AppData\Local\Programs\Python\Python311\Lib\site-packages\decorator.py", line 235, in fun
+    return caller(func, *(extras + args), **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bassa\AppData\Local\Programs\Python\Python311\Lib\site-packages\moviepy\decorators.py", line 102, in wrapper
+    return func(*new_args, **new_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bassa\AppData\Local\Programs\Python\Python311\Lib\site-packages\moviepy\video\VideoClip.py", line 1703, in __init__
+    img = Image.new(img_mode, (img_width, img_height), color=bg_color)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bassa\AppData\Local\Programs\Python\Python311\Lib\site-packages\PIL\Image.py", line 3117, in new
+    return im._new(core.fill(mode, size, color))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'float' object cannot be interpreted as an integer
+

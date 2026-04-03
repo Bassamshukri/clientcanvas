@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["fabric"],
+  transpilePackages: ["fabric", "wallpaper-motion-studio"],
   images: {
     remotePatterns: [
       {

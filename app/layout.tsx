@@ -1,11 +1,12 @@
 import "./globals.css";
 import { CommandBar } from "../components/command-bar";
+import { ToastProvider } from "../components/strategic-toast";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "ClientCanvas",
-  description: "Canva-style design tool with approvals"
+  title: "ClientCanvas | Strategic Operating System",
+  description: "High-fidelity strategic coordination and presentation protocol."
 };
 
 export default function RootLayout({
@@ -16,8 +17,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <CommandBar />
-        {children}
+        <ToastProvider>
+           <CommandBar />
+           {children}
+        </ToastProvider>
       </body>
     </html>
   );

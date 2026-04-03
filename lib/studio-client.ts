@@ -105,11 +105,22 @@ export async function uploadAsset(workspaceId: string, file: File) {
   const filePath = `${workspaceId}/${Math.random()}.${fileExt}`;
 
   // 1. Upload to storage
-  const { error: uploadError } = await supabase.storage
-    .from("workspace-assets")
-    .upload(filePath, file);
+  try {
+    const { error: uploadError } = await supabase.storage
+      .from("workspace-assets")
+      .upload(filePath, file);
 
-  if (uploadError) throw uploadError;
+    if (uploadError) {
+       console.error("Supabase Storage Error:", uploadError);
+       if (uploadError.message.includes("bucket not found")) {
+          throw new Error("STRATEGIC_STORAGE_MISSING: The 'workspace-assets' bucket has not been provisioned in Supabase.");
+       }
+       throw uploadError;
+    }
+  } catch (err: any) {
+     if (err.message.includes("STRATEGIC_STORAGE_MISSING")) throw err;
+     throw new Error(`UPLOAD_PROTOCOL_FAILURE: ${err.message || "Unknown Network Error"}`);
+  }
 
   const { data: { publicUrl } } = supabase.storage
     .from("workspace-assets")

@@ -261,3 +261,77 @@ export function getSlideBoundaries(canvas: Canvas): number[] {
     .sort((a, b) => a - b);
   return [0, ...seams];
 }
+
+export function getStrategicSequence(canvas: Canvas | null): FabricObject[] {
+  if (!canvas) return [];
+  const objects = canvas.getObjects();
+  // Filter for primary logic nodes
+  const nodes = objects.filter(o => o.isPrimaryLogic);
+  // Narrative Sort: Top-to-Bottom, then Left-to-Right
+  return nodes.sort((a, b) => {
+     const topDiff = (a.top || 0) - (b.top || 0);
+     if (Math.abs(topDiff) < 50) return (a.left || 0) - (b.left || 0);
+     return topDiff;
+  });
+}
+
+/**
+ * RECALIBRATE_PROTOCOL (v1.3.0)
+ * Performs a global optimization sweep to fix overlaps and refine narrative flow.
+ */
+export function recalibrateStrategicLayout(canvas: Canvas | null) {
+  if (!canvas) return;
+  const nodes = getStrategicSequence(canvas);
+  if (nodes.length === 0) return;
+
+  let currentY = nodes[0].top || 120;
+  
+  nodes.forEach((node, i) => {
+     if (i === 0) {
+        node._logicReflowHeight = node.height! * node.scaleY!;
+        return;
+     }
+     
+     const prev = nodes[i-1];
+     const prevBottom = (prev.top || 0) + (prev._logicReflowHeight || (prev.height! * prev.scaleY!));
+     
+     // Ensure at least 40px margin between blocks
+     const idealTop = prevBottom + 40;
+     
+     if (Math.abs((node.top || 0) - idealTop) > 2) {
+        node.set("top", idealTop);
+        node.setCoords();
+        node._logicReflowHeight = node.height! * node.scaleY!;
+     }
+  });
+
+  canvas.requestRenderAll();
+}
+
+/**
+ * LOGIC_MOAT_DENSITY (v1.3.0)
+ * Calculates a connectivity score based on semantic proximity and logical anchors.
+ */
+export function calculateLogicMoatDensity(canvas: Canvas | null): number {
+  if (!canvas) return 0;
+  const objects = canvas.getObjects();
+  const logicNodes = objects.filter(o => o.isPrimaryLogic);
+  if (logicNodes.length < 2) return 100;
+
+  let score = 85; // Base stability
+  
+  // Rule 1: High density penalty (overlaps)
+  let overlaps = 0;
+  for (let i = 0; i < logicNodes.length; i++) {
+     for (let j = i + 1; j < logicNodes.length; j++) {
+        if (logicNodes[i].intersectsWithObject(logicNodes[j])) overlaps++;
+     }
+  }
+  score -= (overlaps * 15);
+
+  // Rule 2: Floating node penalty (not anchored)
+  const floating = logicNodes.filter(n => !n.anchoredToId && !n.anchorToId).length;
+  score -= (floating * 5);
+
+  return Math.max(0, Math.min(100, score));
+}
